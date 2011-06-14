@@ -2,7 +2,6 @@ require File.expand_path('authentication_header', File.dirname(__FILE__))
 
 module Rapleaf
   module Marketo
-    attr_accessor :fields
     
     def self.new_client(access_key, secret_key, endpoint = "https://na-i.marketo.com/soap/mktows/1_5", field_map = {})
       client = Savon::Client.new do
@@ -12,9 +11,7 @@ module Rapleaf
         http.open_timeout = 90
         http.headers      = {"Connection" => "Keep-Alive"}
       end
-      @fields = field_map unless fields.empty?
-
-      Client.new(client, Rapleaf::Marketo::AuthenticationHeader.new(access_key, secret_key))
+      Client.new(client, Rapleaf::Marketo::AuthenticationHeader.new(access_key, secret_key), field_map)
     end
 
     # = The client for talking to marketo
@@ -54,10 +51,14 @@ module Rapleaf
     #
     # response = client.sync_lead_record(lead_record)
     class Client
-      # This constructor is used internally, create your client with *Rapleaf::Marketo.new_client(<access_key>, <secret_key>)*
-      def initialize(savon_client, authentication_header)
+      # maps internal field names to Marketo field names
+      attr_accessor :fields
+
+      # This constructor is used internally, create your client with *Rapleaf::Marketo.new_client(<access_key>, <secret_key>, <internal_to_marketo_field_map>)*
+      def initialize(savon_client, authentication_header, field_map)
         @client = savon_client
         @header = authentication_header
+        @fields = field_map unless field_map.empty?
       end
 
       public
@@ -65,7 +66,6 @@ module Rapleaf
       def get_lead_by_idnum(idnum)
         get_lead(LeadKey.new(LeadKeyType::IDNUM, idnum))
       end
-
 
       def get_lead_by_email(email)
         get_lead(LeadKey.new(LeadKeyType::EMAIL, email))
@@ -80,8 +80,9 @@ module Rapleaf
         if att[:email].nil?
           return nil
         end
+        puts @fields
         lead_record = LeadRecord.new(att[:email])
-        att.each { |field, value| lead_record.set_attribute(MARKETO_FIELDS[field], value) unless @fields[field].nil? }
+        att.each { |field, value| lead_record.set_attribute(@fields[field], value) unless @fields[field].nil? }
         sync_lead_record(lead_record)
       end
       
