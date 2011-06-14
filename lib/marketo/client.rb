@@ -77,10 +77,10 @@ module Rapleaf
       
       # this sets an arbitrary number of attributes
       def sync_lead_attributes(att)
-        if att[:email].nil?
+        if att['email'].nil?
           return nil
         end
-        lead_record = LeadRecord.new(att[:email])
+        lead_record = LeadRecord.new(att['email'])
         att.each { |field, value| lead_record.set_attribute(@fields[field], value) unless @fields[field].nil? }
         sync_lead_record(lead_record)
       end
