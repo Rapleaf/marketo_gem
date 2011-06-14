@@ -80,7 +80,6 @@ module Rapleaf
         if att[:email].nil?
           return nil
         end
-        puts @fields
         lead_record = LeadRecord.new(att[:email])
         att.each { |field, value| lead_record.set_attribute(@fields[field], value) unless @fields[field].nil? }
         sync_lead_record(lead_record)
