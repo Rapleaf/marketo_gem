@@ -2,16 +2,9 @@ require File.expand_path('authentication_header', File.dirname(__FILE__))
 
 module Rapleaf
   module Marketo
+    attr_accessor :fields
     
-    MARKETO_FIELDS = {
-      id:           "idnum",
-      email:        "Email",
-      first_name:   "FirstName",
-      last_name:    "LastName",
-      company:      "Company"
-    }.freeze
-    
-    def self.new_client(access_key, secret_key, endpoint = "https://na-i.marketo.com/soap/mktows/1_5")
+    def self.new_client(access_key, secret_key, endpoint = "https://na-i.marketo.com/soap/mktows/1_5", field_map = {})
       client = Savon::Client.new do
         wsdl.endpoint     = endpoint
         wsdl.document     = "http://app.marketo.com/soap/mktows/1_4?WSDL"
@@ -19,6 +12,7 @@ module Rapleaf
         http.open_timeout = 90
         http.headers      = {"Connection" => "Keep-Alive"}
       end
+      @fields = field_map unless fields.empty?
 
       Client.new(client, Rapleaf::Marketo::AuthenticationHeader.new(access_key, secret_key))
     end
@@ -80,27 +74,6 @@ module Rapleaf
       def set_logger(logger)
         @logger = logger
       end
-
-      # create (if new) or update (if existing) a lead
-      #
-      # * email - email address of lead
-      # * first - first name of lead
-      # * last - surname/last name of lead
-      # * company - company the lead is associated with
-      # * mobile - mobile/cell phone number
-      #
-      # returns the LeadRecord instance on success otherwise nil
-      # this isn't sufficient for SalesCrunch (we need arbitrary fields)
-      # see sync_lead_attributes for a replacement
-      def sync_lead(email, first, last, company, mobile)
-        sync_lead_attributes({
-          email:        email,
-          first_name:   first,
-          last_name:    last,
-          company:      company,
-          mobile:       mobile
-        })
-      end
       
       # this sets an arbitrary number of attributes
       def sync_lead_attributes(att)
@@ -108,11 +81,7 @@ module Rapleaf
           return nil
         end
         lead_record = LeadRecord.new(att[:email])
-        att.each do |field, value|
-          if !MARKETO_FIELDS[field].nil?
-            lead_record.set_attribute(MARKETO_FIELDS[field], value)
-          end
-        end
+        att.each { |field, value| lead_record.set_attribute(MARKETO_FIELDS[field], value) unless @fields[field].nil? }
         sync_lead_record(lead_record)
       end
       
