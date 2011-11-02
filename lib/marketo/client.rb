@@ -2,10 +2,13 @@ require File.expand_path('authentication_header', File.dirname(__FILE__))
 
 module Rapleaf
   module Marketo
-    def self.new_client(access_key, secret_key)
+    
+    def self.new_client(access_key, secret_key, api_subdomain='na-c', api_version='1.7')
+      
+      api_version = api_version.sub(".", "_")
       client = Savon::Client.new do
-        wsdl.endpoint     = "https://na-i.marketo.com/soap/mktows/1_5"
-        wsdl.document     = "http://app.marketo.com/soap/mktows/1_4?WSDL"
+        wsdl.endpoint     = "https://#{api_subdomain}.marketo.com/soap/mktows/#{api_version}"
+        wsdl.document     = "http://app.marketo.com/soap/mktows/#{api_version}?WSDL"
         http.read_timeout = 90
         http.open_timeout = 90
         http.headers      = {"Connection" => "Keep-Alive"}
@@ -108,6 +111,34 @@ module Rapleaf
         rescue Exception => e
           @logger.log(e) if @logger
           return nil
+        end
+      end
+      
+      def sync_multi_lead_records(lead_records)
+        send_records = []
+        begin
+          lead_records.each do |lead_record|
+            attributes = []
+            lead_record.each_attribute_pair do |name, value|
+              attributes << {:attr_name => name, :attr_type => 'string', :attr_value => value}
+            end
+            
+            send_records << {:lead_record => 
+              { "Email" => lead_record.email, 
+                :lead_attribute_list => 
+                  { :attribute => attributes }
+              }
+            }
+          end
+          
+          response = send_request("ns1:paramsSyncMultipleLeads", {
+                :lead_record_list => send_records }) # an array of lead records
+          
+          return response
+        rescue Exception => e
+          @logger.log(e) if @logger
+          return @client.http
+          #return nil
         end
       end
 
