@@ -3,7 +3,7 @@ require File.expand_path('authentication_header', File.dirname(__FILE__))
 module Rapleaf
   module Marketo
     
-    def self.new_client(access_key, secret_key, api_subdomain='na-c', api_version='1.7')
+    def self.new_client(access_key, secret_key, api_version='1.7', api_subdomain='na-c')
       
       api_version = api_version.sub(".", "_")
       client = Savon::Client.new do
