@@ -2,16 +2,16 @@ require File.expand_path('authentication_header', File.dirname(__FILE__))
 
 module Rapleaf
   module Marketo
-    def self.new_client(access_key, secret_key)
+
+    def self.new_client(access_key, secret_key, endpoint = "https://na-i.marketo.com/soap/mktows/1_5", field_map = {})
       client = Savon::Client.new do
-        wsdl.endpoint     = "https://na-i.marketo.com/soap/mktows/1_5"
+        wsdl.endpoint     = endpoint
         wsdl.document     = "http://app.marketo.com/soap/mktows/1_4?WSDL"
         http.read_timeout = 90
         http.open_timeout = 90
         http.headers      = {"Connection" => "Keep-Alive"}
       end
-
-      Client.new(client, Rapleaf::Marketo::AuthenticationHeader.new(access_key, secret_key))
+      Client.new(client, Rapleaf::Marketo::AuthenticationHeader.new(access_key, secret_key), field_map)
     end
 
     # = The client for talking to marketo
@@ -51,10 +51,14 @@ module Rapleaf
     #
     # response = client.sync_lead_record(lead_record)
     class Client
-      # This constructor is used internally, create your client with *Rapleaf::Marketo.new_client(<access_key>, <secret_key>)*
-      def initialize(savon_client, authentication_header)
+      # maps internal field names to Marketo field names
+      attr_accessor :fields
+
+      # This constructor is used internally, create your client with *Rapleaf::Marketo.new_client(<access_key>, <secret_key>, <internal_to_marketo_field_map>)*
+      def initialize(savon_client, authentication_header, field_map)
         @client = savon_client
         @header = authentication_header
+        @fields = field_map unless field_map.empty?
       end
 
       public
@@ -62,7 +66,6 @@ module Rapleaf
       def get_lead_by_idnum(idnum)
         get_lead(LeadKey.new(LeadKeyType::IDNUM, idnum))
       end
-
 
       def get_lead_by_email(email)
         get_lead(LeadKey.new(LeadKeyType::EMAIL, email))
@@ -72,22 +75,11 @@ module Rapleaf
         @logger = logger
       end
 
-      # create (if new) or update (if existing) a lead
-      #
-      # * email - email address of lead
-      # * first - first name of lead
-      # * last - surname/last name of lead
-      # * company - company the lead is associated with
-      # * mobile - mobile/cell phone number
-      #
-      # returns the LeadRecord instance on success otherwise nil
-      def sync_lead(email, first, last, company, mobile)
-        lead_record = LeadRecord.new(email)
-        lead_record.set_attribute('FirstName', first)
-        lead_record.set_attribute('LastName', last)
-        lead_record.set_attribute('Email', email)
-        lead_record.set_attribute('Company', company)
-        lead_record.set_attribute('MobilePhone', mobile)
+      # this sets an arbitrary number of attributes
+      def sync_lead_attributes(att)
+        return nil if att['email'].nil?
+        lead_record = LeadRecord.new(att['email'])
+        att.each { |field, value| lead_record.set_attribute(@fields[field], value) unless @fields[field].nil? }
         sync_lead_record(lead_record)
       end
 
@@ -105,6 +97,53 @@ module Rapleaf
                    :lead_attribute_list => {
                        :attribute => attributes}}})
           return LeadRecord.from_hash(response[:success_sync_lead][:result][:lead_record])
+        rescue Exception => e
+          @logger.log(e) if @logger
+          return nil
+        end
+      end
+
+      def sync_multiple_lead_attributes(att)
+        return nil if att.empty?
+        leads = []
+        att.each do |record|
+          lead_record = LeadRecord.new(record['email'])
+          record.each { |field, value| lead_record.set_attribute(@fields[field], value) unless @fields[field].nil? }
+          leads << lead_record
+        end
+        begin
+          sync_multiple_lead_records(leads)
+        rescue Exception => e
+          @logger.log(e) if @logger
+          return nil
+        end
+      end
+
+      def sync_multiple_lead_records(lead_records)
+        begin
+          lead_record_list = []
+          lead_records.each do |lead_record|
+            attributes = []
+            lead_record.each_attribute_pair do |name, value|
+              attributes << {
+                :attr_name  => name,
+                :attr_type  => 'string',
+                :attr_value => value
+              }
+            end
+            lead_record_list  << {
+              :email                => lead_record.email,
+              :lead_attribute_list  => {
+                :attribute  => attributes
+              }
+            }
+          end
+
+          response = send_request("ns1:paramsSyncMultipleLeads", {
+            :dedup_enabled    => true,
+            :lead_record_list => { :lead_record => lead_record_list }
+          })
+          return !response[:success_sync_multiple_leads][:result][:sync_status_list][:sync_status].empty?
         rescue Exception => e
           @logger.log(e) if @logger
           return nil
