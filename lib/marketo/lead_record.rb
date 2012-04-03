@@ -3,10 +3,9 @@ module Rapleaf
     # Represents a record of the data known about a lead within marketo
     class LeadRecord
       def initialize(email, idnum = nil)
-        @email      = email
         @idnum      = idnum
         @attributes = {}
-        set_attribute('Email', @email)
+        set_attribute('Email', email)
       end
 
       # hydrates an instance from a savon hash returned form the marketo API
@@ -25,7 +24,7 @@ module Rapleaf
 
       # get the record email
       def email
-        @email
+        get_attribute('Email')
       end
 
       def attributes
@@ -51,8 +50,7 @@ module Rapleaf
 
       def ==(other)
         @attributes == other.attributes &&
-        @idnum == other.idnum &&
-        @email == other.email
+        @idnum == other.idnum
       end
     end
   end

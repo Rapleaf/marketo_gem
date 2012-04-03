@@ -148,36 +148,27 @@ module Rapleaf
           }
           expect_request(savon_client,
                          authentication_header,
-                         equals_matcher({
-                                            :return_lead => true,
-                                            :lead_record => {
-                                                :email               => EMAIL,
-                                                :lead_attribute_list =>
-                                                    {
-                                                        :attribute => [
-                                                            {:attr_value => "val1",
-                                                             :attr_name  => "name1",
-                                                             :attr_type  => "string"},
-                                                            {:attr_value => "val2",
-                                                             :attr_name  => "name2",
-                                                             :attr_type  => "string"},
-                                                            {:attr_value => EMAIL,
-                                                             :attr_name  => "Email",
-                                                             :attr_type  => "string"}
-                                                        ]}}}),
+                         (Proc.new do |actual|
+                             retval = true
+                             retval = false unless actual[:return_lead]
+                             retval = false unless actual[:lead_record][:email].equal?(EMAIL)
+                             retval = false unless actual[:lead_record][:lead_attribute_list][:attribute].size == 5
+                             retval = false unless actual[:lead_record][:lead_attribute_list][:attribute].include?({:attr_value => EMAIL, :attr_name => "Email", :attr_type => "string"})
+                             retval = false unless actual[:lead_record][:lead_attribute_list][:attribute].include?({:attr_value => "val1", :attr_name => "name1", :attr_type => "string"})
+                             retval = false unless actual[:lead_record][:lead_attribute_list][:attribute].include?({:attr_value => "val2", :attr_name => "name2", :attr_type => "string"})
+                             retval = false unless actual[:lead_record][:lead_attribute_list][:attribute].include?({:attr_value => "val3", :attr_name => "name3", :attr_type => "string"})
+                             retval = false unless actual[:lead_record][:lead_attribute_list][:attribute].include?({:attr_value => "val4", :attr_name => "name4", :attr_type => "string"})
+                             retval.should == true
+                         end),
                          'ns1:paramsSyncLead',
                          response_hash)
-          lead_record = LeadRecord.new(EMAIL)
+          lead_record = LeadRecord.new(EMAIL, IDNUM)
           lead_record.set_attribute('name1', 'val1')
           lead_record.set_attribute('name2', 'val2')
+          lead_record.set_attribute('name3', 'val3')
+          lead_record.set_attribute('name4', 'val4')
 
-          expected_lead_record = LeadRecord.new(EMAIL, IDNUM)
-          expected_lead_record.set_attribute('Email', EMAIL)
-          expected_lead_record.set_attribute('name1', 'val1')
-          expected_lead_record.set_attribute('name2', 'val2')
-          expected_lead_record.set_attribute('name3', 'val3')
-          expected_lead_record.set_attribute('name4', 'val4')
-          client.sync_lead_record(lead_record).should == expected_lead_record
+          client.sync_lead_record(lead_record).should == lead_record
         end
 
         it "should have the correct body format on sync_lead" do
