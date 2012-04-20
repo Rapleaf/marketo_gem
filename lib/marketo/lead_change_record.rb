@@ -21,6 +21,14 @@ module Marketo
     def idnum
       @idnum
     end
+    
+    def activity_type
+      @activity_type
+    end
+    
+    def activity_date_time
+      @activity_date_time
+    end
 
     def attributes
       @attributes

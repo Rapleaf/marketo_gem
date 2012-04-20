@@ -13,10 +13,13 @@ module Marketo
       records = records_hash.present? ? records_hash[:lead_change_record].map {|h| LeadChangeRecord.from_hash(h)} : []
       return LeadChangeRecordList.new(records, savon_hash[:remaining_count], savon_hash[:new_start_position])
     end
+    
+    def records
+      @records
+    end
 
-    # get the record idnum
     def count
-      @record.count
+      @records.count
     end
 
     def remaining_count
