@@ -8,15 +8,15 @@ Gem::Specification.new do |gem|
      client = Rapleaf::Marketo.new_client(<access_key>, <secret_key>, (api_subdomain = 'na-i'), (api_version = '1_5'), (document_version = '1_4'))
      More information at https://www.rapleaf.com/developers/marketo.
   EOF
-  gem.email        = "james@rapleaf.com"
-  gem.authors      = ["James O'Brien"]
+  gem.email        = "iamnader@gmail.com"
+  gem.authors      = ["Nader Akhnoukh"]
   gem.homepage     = "https://www.rapleaf.com/developers/marketo"
   gem.files        = Dir['lib/**/*.rb']
   gem.require_path = ['lib']
   gem.test_files   = Dir['spec/**/*_spec.rb']
   gem.version      = "1.4.0"
   gem.has_rdoc     = true
-  gem.rdoc_options << '--title' << 'Marketo Client Gem' << '--main' << 'Rapleaf::Marketo::Client'
+  gem.rdoc_options << '--title' << 'Marketo Client Gem' << '--main' << 'Marketo::Client'
 
   gem.add_development_dependency('rspec', '>= 2.3.0')
   gem.add_dependency('savon', '>= 0.8.3')

@@ -1,29 +1,25 @@
 module Marketo
-  # Represents a record of the data known about a lead within marketo
-  class LeadRecord
-    def initialize(email, idnum = nil)
-      @idnum      = idnum
+  # Represents a marketo change record
+  class LeadChangeRecord
+    def initialize(activity_date_time = nil, activity_type = nil, idnum = nil)
+      @activity_date_time = activity_date_time
+      @activity_type = activity_type
+      @idnum = idnum.to_i
       @attributes = {}
-      set_attribute('Email', email)
     end
 
     # hydrates an instance from a savon hash returned form the marketo API
     def self.from_hash(savon_hash)
-      lead_record = LeadRecord.new(savon_hash[:email], savon_hash[:id].to_i)
-      savon_hash[:lead_attribute_list][:attribute].each do |attribute|
-        lead_record.set_attribute(attribute[:attr_name], attribute[:attr_value])
+      r = LeadChangeRecord.new(savon_hash[:activity_date_time], savon_hash[:activity_type], savon_hash[:id])
+      savon_hash[:activity_attributes][:attribute].each do |attribute|
+        r.set_attribute(attribute[:attr_name], attribute[:attr_value])
       end
-      lead_record
+      r
     end
 
     # get the record idnum
     def idnum
       @idnum
-    end
-
-    # get the record email
-    def email
-      get_attribute('Email')
     end
 
     def attributes
