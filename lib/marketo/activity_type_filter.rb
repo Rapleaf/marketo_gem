@@ -10,7 +10,10 @@ module Marketo
     # create a hash from this instance, for sending this object to marketo using savon
     def to_hash
       {
-          :includeTypes => @includes.map{|i| {"activityType" => i}}
+        :include_types => 
+        {
+          :activity_type => @includes
+        }
       }
     end
   end
