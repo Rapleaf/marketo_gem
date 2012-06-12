@@ -68,6 +68,13 @@ module Rapleaf
         get_lead(LeadKey.new(LeadKeyType::IDNUM, idnum))
       end
 
+      def get_lead_by_contact_id(contact_id)
+        get_lead(LeadKey.new(LeadKeyType::SFDCCONTACTID, contact_id))
+      end
+      
+      def get_lead_by_lead_id(lead_id)
+        get_lead(LeadKey.new(LeadKeyType::SFDCLEADID, lead_id))
+      end
 
       def get_lead_by_email(email)
         get_lead(LeadKey.new(LeadKeyType::EMAIL, email))
@@ -135,6 +142,26 @@ module Rapleaf
                     :lead_attribute_list => { :attribute => attributes},
                     :id => idnum
                   }})
+          return LeadRecord.from_hash(response[:success_sync_lead][:result][:lead_record])
+        rescue Exception => e
+          @logger.log(e) if @logger
+          return nil
+        end
+      end
+      
+      def associate_cookie(lead_record, cookie)
+        idnum = lead_record.idnum
+        raise 'lead record id not set' if idnum.nil?
+
+        begin
+          response = send_request("ns1:paramsSyncLead", {
+              :return_lead => true,
+              :lead_record =>
+                  {
+                    :Id => idnum
+                  },
+              :marketo_cookie => cookie})
+              
           return LeadRecord.from_hash(response[:success_sync_lead][:result][:lead_record])
         rescue Exception => e
           @logger.log(e) if @logger
