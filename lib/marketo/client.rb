@@ -153,20 +153,19 @@ module Rapleaf
         idnum = lead_record.idnum
         raise 'lead record id not set' if idnum.nil?
 
-        begin
-          response = send_request("ns1:paramsSyncLead", {
-              :return_lead => true,
-              :lead_record =>
-                  {
-                    :Id => idnum
-                  },
-              :marketo_cookie => cookie})
-              
-          return LeadRecord.from_hash(response[:success_sync_lead][:result][:lead_record])
-        rescue Exception => e
-          @logger.log(e) if @logger
-          return nil
-        end
+        attributes = []
+        attributes << {:attr_name => 'Id', :attr_type => 'string', :attr_value => idnum.to_s}
+      
+        response = send_request("ns1:paramsSyncLead", {
+            :return_lead => true,
+            :lead_record =>
+                {
+                  :lead_attribute_list => { :attribute => attributes },
+                  :Id => idnum
+                },
+            :marketo_cookie => cookie})
+            
+        return LeadRecord.from_hash(response[:success_sync_lead][:result][:lead_record])
       end
 
       def add_to_list(list_key, email)
