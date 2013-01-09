@@ -6,9 +6,10 @@ module Rapleaf
       config["api_subdomain"] ||= 'na-i'
       config["api_version"] ||= '1_5'
       config["document_version"] ||= '1_4'
+      config["endpoint"] ||= "https://na-sj02.marketo.com/soap/mktows/2_0"
 
       client = Savon::Client.new do
-        wsdl.endpoint     = "https://#{config["api_subdomain"]}.marketo.com/soap/mktows/#{config["api_version"]}"
+        wsdl.endpoint     = config["endpoint"]
         wsdl.document     = "http://app.marketo.com/soap/mktows/#{config["document_version"]}?WSDL"
         http.read_timeout = 90
         http.open_timeout = 90
