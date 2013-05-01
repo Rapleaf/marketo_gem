@@ -2,7 +2,7 @@ require File.expand_path('authentication_header', File.dirname(__FILE__))
 
 module Rapleaf
   module Marketo
-    def self.new_client(access_key, secret_key, api_subdomain = 'na-i', api_version = '1_5', document_version = '1_4')
+    def self.new_client(access_key, secret_key, logger=nil, api_subdomain = 'na-i', api_version = '1_5', document_version = '1_4')
       client = Savon::Client.new do
         wsdl.endpoint     = "https://#{api_subdomain}.marketo.com/soap/mktows/#{api_version}"
         wsdl.document     = "http://app.marketo.com/soap/mktows/#{document_version}?WSDL"
@@ -11,7 +11,7 @@ module Rapleaf
         http.headers      = {"Connection" => "Keep-Alive"}
       end
 
-      Client.new(client, Rapleaf::Marketo::AuthenticationHeader.new(access_key, secret_key))
+      Client.new(client, Rapleaf::Marketo::AuthenticationHeader.new(access_key, secret_key), logger)
     end
 
     # = The client for talking to marketo
@@ -57,9 +57,10 @@ module Rapleaf
     #
     class Client
       # This constructor is used internally, create your client with *Rapleaf::Marketo.new_client(<access_key>, <secret_key>)*
-      def initialize(savon_client, authentication_header)
+      def initialize(savon_client, authentication_header, logger=nil)
         @client = savon_client
         @header = authentication_header
+        set_logger(logger) if logger.present?
       end
 
       public
@@ -69,10 +70,12 @@ module Rapleaf
       end
 
       def get_lead_by_contact_id(contact_id)
+        log_info("Attempting to retrieve lead by contact id: " + contact_id.to_s)
         get_lead(LeadKey.new(LeadKeyType::SFDCCONTACTID, contact_id))
       end
       
       def get_lead_by_lead_id(lead_id)
+        log_info("Attempting to retrieve lead by lead id: " + lead_id.to_s)
         get_lead(LeadKey.new(LeadKeyType::SFDCLEADID, lead_id))
       end
 
@@ -118,7 +121,7 @@ module Rapleaf
                        :attribute => attributes}}})
           return LeadRecord.from_hash(response[:success_sync_lead][:result][:lead_record])
         rescue Exception => e
-          @logger.log(e) if @logger
+          log_error(e)
           return nil
         end
       end
@@ -144,18 +147,23 @@ module Rapleaf
                   }})
           return LeadRecord.from_hash(response[:success_sync_lead][:result][:lead_record])
         rescue Exception => e
-          @logger.log(e) if @logger
+          log_error(e)
           return nil
         end
       end
       
       def associate_cookie(lead_record, cookie)
         idnum = lead_record.idnum
+        log_info("Attempting to call marketo_gem's associate_cookie for user with id = #{idnum.to_s}...")
+        log_info("cookie = " + cookie.to_s)
+
         raise 'lead record id not set' if idnum.nil?
 
         attributes = []
         attributes << {:attr_name => 'Id', :attr_type => 'string', :attr_value => idnum.to_s}
-      
+
+        log_info("attributes = " + attributes.to_s)
+
         response = send_request("ns1:paramsSyncLead", {
             :return_lead => true,
             :lead_record =>
@@ -164,7 +172,9 @@ module Rapleaf
                   :Id => idnum
                 },
             :marketo_cookie => cookie})
-            
+
+        log_info("response: " + response.to_s)
+
         return LeadRecord.from_hash(response[:success_sync_lead][:result][:lead_record])
       end
 
@@ -181,6 +191,18 @@ module Rapleaf
       end
 
       private
+
+      def log_info(message)
+        @logger.info("[#{Time.now}] INFO  " + message) if @logger
+      end
+
+      def log_error(e)
+        if @logger
+          @logger.error("[#{Time.now}] ERROR  " + e.message)
+        end
+      end
+
+
       def list_operation(list_key, list_operation_type, email)
         begin
           response = send_request("ns1:paramsListOperation", {
@@ -195,7 +217,7 @@ module Rapleaf
           })
           return response
         rescue Exception => e
-          @logger.log(e) if @logger
+          log_error(e)
           return nil
         end
       end
@@ -205,7 +227,7 @@ module Rapleaf
           response = send_request("ns1:paramsGetLead", {:lead_key => lead_key.to_hash})
           return LeadRecord.from_hash(response[:success_get_lead][:result][:lead_record_list][:lead_record])
         rescue Exception => e
-          @logger.log(e) if @logger
+          log_error(e)
           return nil
         end
       end
