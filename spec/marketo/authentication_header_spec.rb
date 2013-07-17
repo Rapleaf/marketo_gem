@@ -1,44 +1,45 @@
 require File.expand_path('../spec_helper', File.dirname(__FILE__))
+require 'pry'
 
 module Rapleaf
   module Marketo
-    ACCESS_KEY = 'ACCESS_KEY'
-    SECRET_KEY = 'SECRET_KEY'
+    #from Marketo API docs
+    TEST_ACCESS_KEY = 'bigcorp1_461839624B16E06BA2D663'
+    TEST_SECRET_KEY = '899756834129871744AAEE88DDCC77CDEEDEC1AAAD66'
+    TEST_DATE = DateTime.new(2010, 4, 9, 14, 4, 54, -7/24.0)
+    TEST_DATE_STRING = '2010-04-09T14:04:54-07:00'
+    TEST_SIGNATURE = 'ffbff4d4bef354807481e66dc7540f7890523a87'
 
     describe AuthenticationHeader do
       it "should set mktowsUserId to access key" do
-        header = Rapleaf::Marketo::AuthenticationHeader.new(ACCESS_KEY, SECRET_KEY)
-        header.get_mktows_user_id.should == ACCESS_KEY
+        header = Rapleaf::Marketo::AuthenticationHeader.new(TEST_ACCESS_KEY, TEST_SECRET_KEY)
+        header.get_mktows_user_id.should == TEST_ACCESS_KEY
       end
 
       it "should set requestSignature" do
-        header = Rapleaf::Marketo::AuthenticationHeader.new(ACCESS_KEY, SECRET_KEY)
+        header = Rapleaf::Marketo::AuthenticationHeader.new(TEST_ACCESS_KEY, TEST_SECRET_KEY)
+        
         header.get_request_signature.should_not be_nil
         header.get_request_signature.should_not == ''
       end
 
       it "should set requestTimestamp in correct format" do
-        header = Rapleaf::Marketo::AuthenticationHeader.new(ACCESS_KEY, SECRET_KEY)
-        time   = DateTime.new(1998, 1, 17, 20, 15, 1)
-        header.set_time(time)
-        header.get_request_timestamp().should == '1998-01-17T20:15:01+00:00'
+        header = Rapleaf::Marketo::AuthenticationHeader.new(TEST_ACCESS_KEY, TEST_SECRET_KEY)
+        header.set_time(TEST_DATE)
+
+        header.get_request_timestamp().should == TEST_DATE_STRING
       end
 
       it "should calculate encrypted signature" do
-        # I got this example of the marketo API docs
+        header     = Rapleaf::Marketo::AuthenticationHeader.new(TEST_ACCESS_KEY, TEST_SECRET_KEY)
+        header.set_time(TEST_DATE)
 
-        access_key = 'bigcorp1_461839624B16E06BA2D663'
-        secret_key = '899756834129871744AAEE88DDCC77CDEEDEC1AAAD66'
-
-        header     = Rapleaf::Marketo::AuthenticationHeader.new(access_key, secret_key)
-        header.set_time(DateTime.new(2010, 4, 9, 14, 4, 55, -7/24.0))
-
-        header.get_request_timestamp.should == '2010-04-09T14:04:54-07:00'
-        header.get_request_signature.should == 'ffbff4d4bef354807481e66dc7540f7890523a87'
+        header.get_request_timestamp.should == TEST_DATE_STRING
+        header.get_request_signature.should == TEST_SIGNATURE
       end
 
       it "should cope if no date is given" do
-        header   = Rapleaf::Marketo::AuthenticationHeader.new(ACCESS_KEY, SECRET_KEY)
+        header   = Rapleaf::Marketo::AuthenticationHeader.new(TEST_ACCESS_KEY, TEST_SECRET_KEY)
         expected = DateTime.now
         actual   = DateTime.parse(header.get_request_timestamp)
 

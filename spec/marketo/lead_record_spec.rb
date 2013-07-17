@@ -2,25 +2,25 @@ require File.expand_path('../spec_helper', File.dirname(__FILE__))
 
 module Rapleaf
   module Marketo
-    EMAIL = 'some@email.com'
-    IDNUM    = 93480938
+    TEST_EMAIL = 'some@email.com'
+    TEST_IDNUM    = 93480938
 
     describe LeadRecord do
       it "should store the idnum" do
-        lead_record = LeadRecord.new(EMAIL, IDNUM)
-        lead_record.idnum.should == IDNUM
+        lead_record = LeadRecord.new(TEST_EMAIL, TEST_IDNUM)
+        lead_record.idnum.should == TEST_IDNUM
       end
 
       it "should store the email" do
-        LeadRecord.new(EMAIL, IDNUM).email.should == EMAIL
+        LeadRecord.new(TEST_EMAIL, TEST_IDNUM).email.should == TEST_EMAIL
       end
 
       it "should implement == sensibly" do
-        lead_record1 = LeadRecord.new(EMAIL, IDNUM)
+        lead_record1 = LeadRecord.new(TEST_EMAIL, TEST_IDNUM)
         lead_record1.set_attribute('favourite color', 'red')
         lead_record1.set_attribute('age', '100')
 
-        lead_record2 = LeadRecord.new(EMAIL, IDNUM)
+        lead_record2 = LeadRecord.new(TEST_EMAIL, TEST_IDNUM)
         lead_record2.set_attribute('favourite color', 'red')
         lead_record2.set_attribute('age', '100')
 
@@ -28,20 +28,20 @@ module Rapleaf
       end
 
       it "should store when attributes are set" do
-        lead_record = LeadRecord.new(EMAIL, IDNUM)
+        lead_record = LeadRecord.new(TEST_EMAIL, TEST_IDNUM)
         lead_record.set_attribute('favourite color', 'red')
         lead_record.get_attribute('favourite color').should == 'red'
       end
 
       it "should store when attributes are updated" do
-        lead_record = LeadRecord.new(EMAIL, IDNUM)
+        lead_record = LeadRecord.new(TEST_EMAIL, TEST_IDNUM)
         lead_record.set_attribute('favourite color', 'red')
         lead_record.set_attribute('favourite color', 'green')
         lead_record.get_attribute('favourite color').should == 'green'
       end
 
       it "should yield all attributes through each_attribute_pair" do
-        lead_record = LeadRecord.new(EMAIL, IDNUM)
+        lead_record = LeadRecord.new(TEST_EMAIL, TEST_IDNUM)
         lead_record.set_attribute('favourite color', 'red')
         lead_record.set_attribute('favourite color', 'green')
         lead_record.set_attribute('age', '99')
@@ -54,12 +54,12 @@ module Rapleaf
         pairs.size.should == 3
         pairs.should include(['favourite color', 'green'])
         pairs.should include(['age', '99'])
-        pairs.should include(['Email', EMAIL])
+        pairs.should include(['Email', TEST_EMAIL])
       end
 
       it "should be instantiable from a savon hash" do
         savon_hash = {
-            :email => EMAIL,
+            :email => TEST_EMAIL,
             :foreign_sys_type => nil,
             :lead_attribute_list => {
                 :attribute => [
@@ -69,12 +69,12 @@ module Rapleaf
                 ]
             },
             :foreign_sys_person_id => nil,
-            :id => IDNUM
+            :id => TEST_IDNUM
         }
 
         actual = LeadRecord.from_hash(savon_hash)
 
-        expected = LeadRecord.new(EMAIL, IDNUM)
+        expected = LeadRecord.new(TEST_EMAIL, TEST_IDNUM)
         expected.set_attribute('Company', 'Rapleaf')
         expected.set_attribute('FirstName', 'James')
         expected.set_attribute('LastName', 'O\'Brien')
