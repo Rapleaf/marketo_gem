@@ -11,10 +11,10 @@ Gem::Specification.new do |gem|
   gem.files        = Dir['lib/**/*.rb']
   gem.require_path = ['lib']
   gem.test_files   = Dir['spec/**/*_spec.rb']
-  gem.version      = "1.4.1"
+  gem.version      = "0.0.2"
   gem.has_rdoc     = true
   gem.rdoc_options << '--title' << 'Marketo Client Gem, updated' << '--main' << 'Rapleaf::Marketo::Client'
 
   gem.add_development_dependency('rspec', '>= 2.3.0')
-  gem.add_dependency('savon', '>= 2.0')
+  gem.add_dependency('savon', '~> 2.2')
 end
