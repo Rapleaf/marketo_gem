@@ -8,7 +8,7 @@ module Rapleaf
       IDNUM   = 29
       FIRST   = 'Joe'
       LAST    = 'Smith'
-      COMPANY = 'Rapleaf'
+      COMPANY = 'ABC Enterprises'
       MOBILE  = '415 123 456'
       API_KEY = 'API123KEY'
 
