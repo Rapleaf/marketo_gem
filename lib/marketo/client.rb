@@ -1,18 +1,19 @@
 require File.expand_path('authentication_header', File.dirname(__FILE__))
+require 'pry'
 
 module Rapleaf
   module Marketo
-    def self.new_client(access_key, secret_key, api_subdomain = 'na-i', api_version = '1_5', document_version = '1_4')
-      client = Savon::Client.new do
-        wsdl.endpoint     = "https://#{api_subdomain}.marketo.com/soap/mktows/#{api_version}"
-        wsdl.document     = "http://app.marketo.com/soap/mktows/#{document_version}?WSDL"
-        http.read_timeout = 90
-        http.open_timeout = 90
-        http.headers      = {"Connection" => "Keep-Alive"}
-      end
+    # def self.new_client(access_key, secret_key, api_subdomain = 'na-i', api_version = '1_5', document_version = '1_4')
+    #   client = Savon::Client.new do
+    #     wsdl.endpoint     = "https://#{api_subdomain}.marketo.com/soap/mktows/#{api_version}"
+    #     wsdl.document     = "http://app.marketo.com/soap/mktows/#{document_version}?WSDL"
+    #     http.read_timeout = 90
+    #     http.open_timeout = 90
+    #     http.headers      = {"Connection" => "Keep-Alive"}
+    #   end
 
-      Client.new(client, Rapleaf::Marketo::AuthenticationHeader.new(access_key, secret_key))
-    end
+    #   Client.new(client, Rapleaf::Marketo::AuthenticationHeader.new(access_key, secret_key))
+    # end
 
     # = The client for talking to marketo
     # based on the SOAP wsdl file: <i>http://app.marketo.com/soap/mktows/1_4?WSDL</i>
@@ -176,26 +177,25 @@ module Rapleaf
 
       def get_lead(lead_key)
         begin
-          response = send_request("ns1:paramsGetLead", {:lead_key => lead_key.to_hash})
-          return LeadRecord.from_hash(response[:success_get_lead][:result][:lead_record_list][:lead_record])
+          response = send_request(:get_lead, {:lead_key => lead_key.to_hash})
+          LeadRecord.from_hash(response[:success_get_lead][:result][:lead_record_list][:lead_record])
         rescue Exception => e
           @logger.log(e) if @logger
-          return nil
+          nil
         end
       end
 
-      def send_request(namespace, body)
+      def send_request(operation, body)
         @header.set_time(DateTime.now)
-        response = request(namespace, body, @header.to_hash)
-        response.to_hash
+        response = request(operation, body, @header.to_hash)
+        response.body
       end
 
-      def request(namespace, body, header)
-        @client.request namespace do |soap|
-          soap.namespaces["xmlns:ns1"]            = "http://www.marketo.com/mktows/"
-          soap.body                               = body
-          soap.header["ns1:AuthenticationHeader"] = header
-        end
+      def request(operation, body, header)  #returns a Savon 2 response
+        auth_header = {"tns:AuthenticationHeader" => header.to_hash}
+        # set the marketo-specific authentication header with authentication SHA1
+        @client.globals.soap_header(auth_header)
+        @client.call(operation, message: body)
       end
     end
   end
