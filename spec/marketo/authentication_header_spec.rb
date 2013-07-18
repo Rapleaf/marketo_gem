@@ -1,5 +1,4 @@
 require File.expand_path('../spec_helper', File.dirname(__FILE__))
-require 'pry'
 
 module Rapleaf
   module Marketo
@@ -18,7 +17,7 @@ module Rapleaf
 
       it "should set requestSignature" do
         header = Rapleaf::Marketo::AuthenticationHeader.new(TEST_ACCESS_KEY, TEST_SECRET_KEY)
-        
+
         header.get_request_signature.should_not be_nil
         header.get_request_signature.should_not == ''
       end
