@@ -1,21 +1,25 @@
 require File.expand_path('authentication_header', File.dirname(__FILE__))
 require 'pry'
 
-module Rapleaf
+module Grabcad
   module Marketo
-    # def self.new_client(access_key, secret_key, api_subdomain = 'na-i', api_version = '1_5', document_version = '1_4')
-    #   client = Savon::Client.new do
-    #     wsdl.endpoint     = "https://#{api_subdomain}.marketo.com/soap/mktows/#{api_version}"
-    #     wsdl.document     = "http://app.marketo.com/soap/mktows/#{document_version}?WSDL"
-    #     http.read_timeout = 90
-    #     http.open_timeout = 90
-    #     http.headers      = {"Connection" => "Keep-Alive"}
-    #   end
+    def self.create_client (access_key, secret_key, endpoint_uri, wsdl_uri = "http://app.marketo.com/soap/mktows/2_1?WSDL")
+      savon_client = Savon.client do
+        endpoint endpoint_uri
+        wsdl wsdl_uri
+        read_timeout 90
+        open_timeout 90
+        headers  ({ "Connection" => "Keep-Alive" })
+        log_level :debug
+        log false
+        pretty_print_xml true
+      end
 
-    #   Client.new(client, Rapleaf::Marketo::AuthenticationHeader.new(access_key, secret_key))
-    # end
+      Client.new(savon_client, Grabcad::Marketo::AuthenticationHeader.new(access_key, secret_key))
+    end
 
-    # = The client for talking to marketo
+
+    # = The client for talking to marketo - WARNING: docs are old and need to be updated
     # based on the SOAP wsdl file: <i>http://app.marketo.com/soap/mktows/1_4?WSDL</i>
     #
     # Usage:
@@ -61,12 +65,18 @@ module Rapleaf
       def initialize(savon_client, authentication_header)
         @client = savon_client
         @header = authentication_header
+        if Rails
+          logger=Rails.logger
+        else
+          logger= Logger.new(STDOUT)
+        end
+        @client.globals.log true
       end
 
       public
 
-      def get_lead_by_idnum(idnum)
-        get_lead(LeadKey.new(LeadKeyType::IDNUM, idnum))
+      def get_lead_by_lead_id(lead_id)
+        get_lead(LeadKey.new(LeadKeyType::IDNUM, lead_id))
       end
 
 
@@ -74,8 +84,32 @@ module Rapleaf
         get_lead(LeadKey.new(LeadKeyType::EMAIL, email))
       end
 
-      def set_logger(logger)
+      def logger=(logger) #Specify a logger compatible with ruby logger
         @logger = logger
+        @client.globals.logger logger
+        HTTPI.logger = logger
+      end
+
+      def log_level=(level)
+        if (level.kind_of? (Fixnum))
+          @logger.level = level
+          symbolic_level =  case level
+          when Logger::DEBUG
+            :debug
+          when Logger::INFO
+            :info
+          when Logger::WARN
+            :warn
+          when Logger::ERROR
+            :error
+          else 
+            :fatal
+          end
+          @client.globals.log_level symbolic_level
+          HTTPI.log_level = symbolic_level
+        else 
+          false
+        end
       end
 
       # create (if new) or update (if existing) a lead
@@ -84,42 +118,42 @@ module Rapleaf
       # * first - first name of lead
       # * last - surname/last name of lead
       # * company - company the lead is associated with
-      # * mobile - mobile/cell phone number
       #
       # returns the LeadRecord instance on success otherwise nil
-      def sync_lead(email, first, last, company, mobile)
-        lead_record = LeadRecord.new(email)
+      def sync_lead(email, first, last, company, lead_id = nil)
+        lead_record = LeadRecord.new(self, email, lead_id)
         lead_record.set_attribute('FirstName', first)
         lead_record.set_attribute('LastName', last)
         lead_record.set_attribute('Email', email)
         lead_record.set_attribute('Company', company)
-        lead_record.set_attribute('MobilePhone', mobile)
-        sync_lead_record(lead_record)
+        lead_record.sync
       end
 
-      def sync_lead_record(lead_record)
+      def sync_lead_record_by_email(lead_record)
+        raise 'Email not set - Cannot sync lead record without email' if lead_record.email.nil?
+
         begin
           attributes = []
           lead_record.each_attribute_pair do |name, value|
             attributes << {:attr_name => name, :attr_type => 'string', :attr_value => value}
           end
 
-          response = send_request("ns1:paramsSyncLead", {
-              :return_lead => true,
-              :lead_record =>
-                  {:email               => lead_record.email,
-                   :lead_attribute_list => {
-                       :attribute => attributes}}})
-          return LeadRecord.from_hash(response[:success_sync_lead][:result][:lead_record])
+          response = send_request(:sync_lead, {
+            :return_lead => true,
+            :lead_record => {
+              :email               => lead_record.email,
+              :lead_attribute_list => { :attribute => attributes } 
+            }
+          })
+          response[:success_sync_lead][:result][:lead_record]
         rescue Exception => e
-          @logger.log(e) if @logger
-          return nil
+          log_exception e
+          nil
         end
       end
 
-      def sync_lead_record_on_id(lead_record)
-        idnum = lead_record.idnum
-        raise 'lead record id not set' if idnum.nil?
+      def sync_lead_record_by_id(lead_record)
+        raise 'ID not set - Cannot sync lead record without ID' if lead_record.id.nil?
 
         begin
           attributes = []
@@ -127,60 +161,71 @@ module Rapleaf
               attributes << {:attr_name => name, :attr_type => 'string', :attr_value => value}
           end
 
-          attributes << {:attr_name => 'Id', :attr_type => 'string', :attr_value => idnum.to_s}
+          attributes << {:attr_name => 'Id', :attr_type => 'string', :attr_value => lead_record.id.to_s}
 
-          response = send_request("ns1:paramsSyncLead", {
-              :return_lead => true,
-              :lead_record =>
-                  {
-                    :lead_attribute_list => { :attribute => attributes},
-                    :id => idnum
-                  }})
-          return LeadRecord.from_hash(response[:success_sync_lead][:result][:lead_record])
+          response = send_request(:sync_lead, {
+            :return_lead => true,
+            :lead_record => {
+              :lead_attribute_list => { :attribute => attributes },
+              :id => lead_record.id
+            }
+          })
+          response[:success_sync_lead][:result][:lead_record]
         rescue Exception => e
-          @logger.log(e) if @logger
-          return nil
+          log_exception e
+          nil
         end
       end
 
-      def add_to_list(list_key, email)
-        list_operation(list_key, ListOperationType::ADD_TO, email)
+      #Remove list operations until their implementation can be reviewed
+      # def add_to_list(list_key, email)
+      #   list_operation(list_key, ListOperationType::ADD_TO, email)
+      # end
+
+      # def remove_from_list(list_key, email)
+      #   list_operation(list_key, ListOperationType::REMOVE_FROM, email)
+      # end
+
+      # def is_member_of_list?(list_key, email)
+      #   list_operation(list_key, ListOperationType::IS_MEMBER_OF, email)
+      # end
+
+      def enable_soap_debugging
+        @client.pretty_print_xml = true
       end
 
-      def remove_from_list(list_key, email)
-        list_operation(list_key, ListOperationType::REMOVE_FROM, email)
-      end
-
-      def is_member_of_list?(list_key, email)
-        list_operation(list_key, ListOperationType::IS_MEMBER_OF, email)
+      def log_exception(exp)
+        @logger.warn(exp)
+        @logger.warn(exp.backtrace)
       end
 
       private
-      def list_operation(list_key, list_operation_type, email)
-        begin
-          response = send_request("ns1:paramsListOperation", {
-              :list_operation   => list_operation_type,
-              :list_key         => list_key,
-              :strict           => 'false',
-              :list_member_list => {
-                  :lead_key => [
-                      {:key_type => 'EMAIL', :key_value => email}
-                  ]
-              }
-          })
-          return response
-        rescue Exception => e
-          @logger.log(e) if @logger
-          return nil
-        end
-      end
+      #Remove list operations until their implementation can be reviewed
+      #def list_operation(list_key, list_operation_type, email)
+      # begin
+      #     response = send_request(:list_operation, {
+      #         :list_operation   => list_operation_type,
+      #         :list_key         => list_key,
+      #         :strict           => 'false',
+      #         :list_member_list => {
+      #             :lead_key => [
+      #                 {:key_type => 'EMAIL', :key_value => email}
+      #             ]
+      #         }
+      #     })
+      #     return response
+      #   rescue Exception => e
+      #     log_exception e
+      #     return nil
+      #   end
+      # end
 
       def get_lead(lead_key)
         begin
           response = send_request(:get_lead, {:lead_key => lead_key.to_hash})
-          LeadRecord.from_hash(response[:success_get_lead][:result][:lead_record_list][:lead_record])
+          LeadRecord.from_hash(self, response[:success_get_lead][:result][:lead_record_list][:lead_record])
         rescue Exception => e
-          @logger.log(e) if @logger
+          log_exception e
           nil
         end
       end
@@ -197,6 +242,7 @@ module Rapleaf
         @client.globals.soap_header(auth_header)
         @client.call(operation, message: body)
       end
+
     end
   end
 end

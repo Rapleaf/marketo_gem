@@ -1,7 +1,7 @@
-module Rapleaf
+module Grabcad
   module Marketo
     # This class exists only to encapsulate the authentication header part of a soap request to marketo
-    # Marketo requires a somewhat complex calculation of an encrypted signature and so it seemed sensible to pull this code out here
+    # It contains a SHA1-based MAC based on a timestamp
     class AuthenticationHeader
       DIGEST = OpenSSL::Digest::Digest.new('sha1')
 
@@ -12,36 +12,25 @@ module Rapleaf
       end
 
       public
-      # time should be a DateTime instance
       def set_time(time)
         @time = time
       end
 
-      def get_mktows_user_id
-        @access_key
-      end
-
-      def get_request_signature
-        calculate_signature
-      end
-
-      def get_request_timestamp
-        @time.to_s
-      end
-
       def to_hash
         {
-            "mktowsUserId"     => get_mktows_user_id,
-            "requestSignature" => get_request_signature,
-            "requestTimestamp" => get_request_timestamp
+            "mktowsUserId"     => @access_key,
+            "requestSignature" => calculate_signature,
+            "requestTimestamp" => request_timestamp
         }
       end
 
       private
+      def request_timestamp
+        @time.to_s
+      end
+
       def calculate_signature
-        request_timestamp = get_request_timestamp
-        string_to_encrypt = request_timestamp + @access_key
-        OpenSSL::HMAC.hexdigest(DIGEST, @secret_key, string_to_encrypt)
+        OpenSSL::HMAC.hexdigest(DIGEST, @secret_key, request_timestamp + @access_key)
       end
     end
   end

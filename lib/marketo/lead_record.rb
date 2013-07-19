@@ -1,37 +1,35 @@
-module Rapleaf
+module Grabcad
   module Marketo
     # Represents a record of the data known about a lead within marketo
     class LeadRecord
-      def initialize(email, idnum = nil)
-        @idnum      = idnum
+      attr_reader :id, :attributes
+
+      def initialize(client, email, lead_id = nil, attrs = nil)
+        @client = client
+        @id = lead_id
         @attributes = {}
+        if (attrs)
+          populate_from attrs
+        end
         set_attribute('Email', email)
       end
 
-      # hydrates an instance from a savon hash returned form the marketo API
-      def self.from_hash(lead_hash)
-        lead_record = LeadRecord.new(lead_hash[:email], lead_hash[:id].to_i)
-        lead_attributes = lead_hash[:lead_attribute_list]
-        if (lead_attributes)
-          lead_hash[:lead_attribute_list][:attribute].each do |attribute|
-            lead_record.set_attribute(attribute[:attr_name], attribute[:attr_value])
-          end
-        end
-        lead_record
+      # creates and populates an instance from a savon hash returned form the marketo API
+      def self.from_hash(client, lead_hash)
+        lead_record = LeadRecord.new(client, lead_hash[:email], lead_hash[:id].to_i, lead_hash)
       end
 
-      # get the record idnum
-      def idnum
-        @idnum
+      def sync
+        if @id
+          populate_from @client.sync_lead_record_by_id(self)
+        else
+          populate_from @client.sync_lead_record_by_email(self)
+        end
       end
 
       # get the record email
       def email
         get_attribute('Email')
-      end
-
-      def attributes
-        @attributes
       end
 
       # update the value of the named attribute
@@ -53,7 +51,30 @@ module Rapleaf
 
       def ==(other)
         @attributes == other.attributes &&
-        @idnum == other.idnum
+        @id == other.id
+      end
+
+      private
+
+      def populate_from(lead_hash)
+        begin
+        @id = lead_hash[:id].to_i
+        lead_attributes = lead_hash[:lead_attribute_list]
+        if lead_attributes # if no attributes set
+          attrs = lead_attributes[:attribute]
+          if attrs.kind_of?(Array) # if only one attribute set, service doesn't return an array
+            attrs.each do |attribute|
+              set_attribute(attribute[:attr_name], attribute[:attr_value])
+            end
+          else
+            set_attribute(attrs[:attr_name], attrs[:attr_value])
+          end
+        end
+        self
+        rescue Exception => e
+          log_exception e
+          nil
+        end
       end
     end
   end
