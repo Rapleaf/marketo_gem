@@ -120,7 +120,7 @@ module Grabcad
       # * company - company the lead is associated with
       #
       # returns the LeadRecord instance on success otherwise nil
-      def sync_lead(email, first, last, company, lead_id = nil)
+      def upsert_lead(email, first, last, company, lead_id = nil)
         lead_record = LeadRecord.new(self, email, lead_id)
         lead_record.set_attribute('FirstName', first)
         lead_record.set_attribute('LastName', last)
