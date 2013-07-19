@@ -65,10 +65,10 @@ module Grabcad
       def initialize(savon_client, authentication_header)
         @client = savon_client
         @header = authentication_header
-        if Rails
+        if Rails && Rails.logger
           logger=Rails.logger
         else
-          logger= Logger.new(STDOUT)
+          logger=Logger.new(STDOUT)
         end
         @client.globals.log true
       end
@@ -195,8 +195,10 @@ module Grabcad
       end
 
       def log_exception(exp)
-        @logger.warn(exp)
-        @logger.warn(exp.backtrace)
+        if @logger 
+          @logger.warn(exp)
+          @logger.warn(exp.backtrace)
+        end
       end
 
       private
