@@ -1,5 +1,4 @@
 require File.expand_path('authentication_header', File.dirname(__FILE__))
-require 'pry'
 
 module Grabcad
   module Marketo
