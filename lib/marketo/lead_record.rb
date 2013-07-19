@@ -72,7 +72,7 @@ module Grabcad
         end
         self
         rescue Exception => e
-          log_exception e
+          client.log_exception e
           nil
         end
       end

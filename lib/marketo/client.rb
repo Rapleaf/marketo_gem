@@ -92,7 +92,7 @@ module Grabcad
 
       def log_level=(level)
         if (level.kind_of? (Fixnum))
-          @logger.level = level
+          @logger.level = level if @logger
           symbolic_level =  case level
           when Logger::DEBUG
             :debug
@@ -244,7 +244,6 @@ module Grabcad
         @client.globals.soap_header(auth_header)
         @client.call(operation, message: body)
       end
-
     end
   end
 end
