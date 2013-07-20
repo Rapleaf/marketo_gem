@@ -1,6 +1,6 @@
 require File.expand_path('../spec_helper', File.dirname(__FILE__))
 
-module Rapleaf
+module Grabcad
   module Marketo
 
     describe Client do
