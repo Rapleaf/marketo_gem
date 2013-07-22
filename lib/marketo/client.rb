@@ -21,17 +21,17 @@ module Grabcad
       Client.new(savon_client, Grabcad::Marketo::AuthenticationHeader.new(access_key, secret_key))
     end
 
-
-    # = The client for talking to marketo - WARNING: docs are old and need to be updated
-    # based on the SOAP wsdl file: <i>http://app.marketo.com/soap/mktows/1_4?WSDL</i>
+    # Based on the WSDL for Marketo API V2.1, cached locally in ../wsdl/marketo_2_1.wsdl.  
+    # To select another version of the API, specify the URI to the WSDL as the optional 4th argument to create_client.
+    # You will need to verify that the gem still functions properly against the new version of the API.
     #
     # Usage:
     #
-    # client = Rapleaf::Marketo.new_client(<access_key>, <secret_key>, api_subdomain = 'na-i', api_version = '1_5', document_version = '1_4')
+    # client = Grabcad::Marketo.create_client(<access_key>, <secret_key>, <endpoint URI>, [<wsdl URI>])
     #
-    # == get_lead_by_email:
+    # == get a lead by email:
     #
-    # lead_record = client.get_lead_by_email('sombody@examnple.com')
+    # lead_record = client.get_lead_by_email('example@email.com')
     #
     # puts lead_record.idnum
     #
@@ -39,32 +39,28 @@ module Grabcad
     #
     # puts lead_record.get_attribute('LastName')
     #
-    # == sync_lead: (update)
+    # == insert/update a new lead: (upsert_lead)
     #
-    # lead_record = client.sync_lead('example@rapleaf.com', 'Joe', 'Smith', 'Company 1', '415 911')
+    # lead_record = client.upsert_lead('new_example@email.com', 'Test', 'Lead', 'Initech')
     #
-    # == sync_lead_record: (update with custom fields)
+    # == update fields: (update with custom fields)
     #
-    # lead_record = Rapleaf::Marketo::LeadRecord.new('harry@rapleaf.com')
+    # lead_record = client.get_lead_by_email('example@email.com')
     #
-    # lead_record.set_attribute('FirstName', 'harry')
+    # lead_record.set_attribute('FirstName', 'NewFirst')
     #
-    # lead_record.set_attribute('LastName', 'smith')
+    # lead_record.set_attribute('LastName', 'NewLast')
     #
-    # lead_record.set_attribute('Email', 'harry@somesite.com')
+    # lead_record.set_attribute('Email', 'updated@email.com')
     #
-    # lead_record.set_attribute('Company', 'Rapleaf')
+    # lead_record.set_attribute('Company', 'Initech2')
     #
-    # lead_record.set_attribute('MobilePhone', '123 456')
+    # lead_record.set_attribute(<custom>, <value>)
     #
-    # response = client.sync_lead_record(lead_record)
-    #
-    # == sync_lead_record_on_id: (update with custom fields, ensuring the sync is id based)
-    #
-    # similarly, you can force a sync via id instead of email by calling client.sync_lead_record_on_id(lead_record)
+    # lead.sync
     #
     class Client
-      # This constructor is used internally, create your client with *Rapleaf::Marketo.new_client(<access_key>, <secret_key>)*
+      # This constructor is used internally, create your client with *Grabcad::Marketo.create_client(<access_key>, <secret_key>, <endpoint>)*
       def initialize(savon_client, authentication_header)
         @client = savon_client
         @header = authentication_header
