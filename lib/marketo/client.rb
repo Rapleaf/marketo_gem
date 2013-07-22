@@ -2,10 +2,15 @@ require File.expand_path('authentication_header', File.dirname(__FILE__))
 
 module Grabcad
   module Marketo
-    def self.create_client (access_key, secret_key, endpoint_uri, wsdl_uri = "http://app.marketo.com/soap/mktows/2_1?WSDL")
+    def self.create_client (access_key, secret_key, endpoint_uri, wsdl_uri = nil)
       savon_client = Savon.client do
         endpoint endpoint_uri
-        wsdl wsdl_uri
+        if wsdl_uri
+          wsdl wsdl_uri
+        else
+          #default to Marketo API version 2.1 with cached WSDL
+          wsdl File.expand_path('../wsdl/marketo_2_1.wsdl', File.dirname(__FILE__))
+        end
         read_timeout 90
         open_timeout 90
         headers  ({ "Connection" => "Keep-Alive" })
@@ -13,7 +18,6 @@ module Grabcad
         log false
         pretty_print_xml true
       end
-
       Client.new(savon_client, Grabcad::Marketo::AuthenticationHeader.new(access_key, secret_key))
     end
 
