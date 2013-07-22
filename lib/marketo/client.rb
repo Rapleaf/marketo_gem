@@ -64,7 +64,8 @@ module Grabcad
       def initialize(savon_client, authentication_header)
         @client = savon_client
         @header = authentication_header
-        if Rails && Rails.logger
+
+        if ENV["RAILS_ENV"] && Rails && Rails.logger
           logger=Rails.logger
         else
           logger=Logger.new(STDOUT)

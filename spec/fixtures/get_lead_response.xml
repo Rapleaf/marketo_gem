@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns1="http://www.marketo.com/mktows/">
+  <SOAP-ENV:Body>
+    <ns1:successGetLead>
+      <result>
+        <count>1</count>
+        <leadRecordList>
+          <leadRecord>
+            <Id>12345</Id>
+            <Email>some@email.com</Email>
+            <ForeignSysPersonId xsi:nil="true"/>
+            <ForeignSysType xsi:nil="true"/>
+            <leadAttributeList>
+              <attribute>
+                <attrName>City</attrName>
+                <attrType>string</attrType>
+                <attrValue>Utopia</attrValue>
+              </attribute>
+              <attribute>
+                <attrName>FirstName</attrName>
+                <attrType>string</attrType>
+                <attrValue>Test</attrValue>
+              </attribute>
+              <attribute>
+                <attrName>LastName</attrName>
+                <attrType>string</attrType>
+                <attrValue>Lead</attrValue>
+              </attribute>
+              <attribute>
+                <attrName>MiddleName</attrName>
+                <attrType>string</attrType>
+                <attrValue>This</attrValue>
+              </attribute>
+            </leadAttributeList>
+          </leadRecord>
+        </leadRecordList>
+      </result>
+    </ns1:successGetLead>
+  </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

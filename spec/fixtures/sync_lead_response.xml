@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns1="http://www.marketo.com/mktows/">
+  <SOAP-ENV:Body>
+    <ns1:successSyncLead>
+      <result>
+        <leadId>12345</leadId>
+        <syncStatus>
+          <leadId>12345</leadId>
+          <status>UPDATED</status>
+          <error xsi:nil="true"/>
+        </syncStatus>
+        <leadRecord>
+          <Id>12345</Id>
+          <Email>some@email.com</Email>
+          <ForeignSysPersonId xsi:nil="true"/>
+          <ForeignSysType xsi:nil="true"/>
+          <leadAttributeList>
+            <attribute>
+              <attrName>City</attrName>
+              <attrType>string</attrType>
+              <attrValue>Utopia</attrValue>
+            </attribute>
+            <attribute>
+              <attrName>FirstName</attrName>
+              <attrType>string</attrType>
+              <attrValue>Test</attrValue>
+            </attribute>
+            <attribute>
+              <attrName>LastName</attrName>
+              <attrType>string</attrType>
+              <attrValue>Lead</attrValue>
+            </attribute>
+            <attribute>
+              <attrName>MiddleName</attrName>
+              <attrType>string</attrType>
+              <attrValue>Updated</attrValue>
+            </attribute>
+          </leadAttributeList>
+        </leadRecord>
+      </result>
+    </ns1:successSyncLead>
+  </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

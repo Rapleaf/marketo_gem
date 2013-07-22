@@ -11,7 +11,7 @@ Gem::Specification.new do |gem|
   gem.files        = Dir['lib/**/*.rb']
   gem.require_path = ['lib']
   gem.test_files   = Dir['spec/**/*_spec.rb']
-  gem.version      = "0.0.7"
+  gem.version      = "0.0.8"
   gem.has_rdoc     = true
   gem.rdoc_options << '--title' << 'Marketo Client Gem, updated' << '--main' << 'Grabcad::Marketo::Client'
 
