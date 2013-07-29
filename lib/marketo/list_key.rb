@@ -1,6 +1,6 @@
 module Grabcad
   module Marketo
-    class LeadKey < Key
+    class ListKey < Key
     end
   end
 end

@@ -19,5 +19,12 @@ module Grabcad
       SFDCLEADOWNERID = "SFDCLEADOWNERID"
       SFDCOPPTYID     = "SFDCOPPTYID"
     end
+
+    # Types of keys that can be used to look up a list
+    module ListKeyType
+      MKTOLISTNAME    ="MKTOLISTNAME"
+      MKTOSALESUSERID ="MKTOSALESUSERID"
+      SFDCLEADOWNERID ="SFDCLEADOWNERID"
+    end
   end
 end
