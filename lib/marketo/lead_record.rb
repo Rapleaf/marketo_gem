@@ -16,6 +16,10 @@ module Grabcad
 
       # creates and populates an instance from a savon hash returned form the marketo API
       def self.from_hash(client, lead_hash)
+        # if there's more than one lead, take the first one.
+        if lead_hash.kind_of? Array
+          lead_hash = lead_hash[0]
+        end
         lead_record = LeadRecord.new(client, lead_hash[:email], lead_hash[:id].to_i, lead_hash)
       end
 
