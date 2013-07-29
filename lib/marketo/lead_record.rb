@@ -58,6 +58,19 @@ module Grabcad
         @id == other.id
       end
 
+      # List operations
+      def add_to_list(list_id)
+        @client.add_to_list(list_id, self)
+      end
+
+      def remove_from_list(list_id)
+        @client.remove_from_list(list_id, self)
+      end
+
+      def is_member_of_list?(list_id)
+        @client.is_member_of_list?(list_id, self)
+      end
+
       private
 
       def populate_from(lead_hash)
@@ -76,7 +89,7 @@ module Grabcad
         end
         self
         rescue Exception => e
-          client.log_exception e
+          @client.log_exception e
           nil
         end
       end

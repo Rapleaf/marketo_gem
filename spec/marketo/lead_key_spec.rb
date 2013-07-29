@@ -16,23 +16,24 @@ module Grabcad
       end
     end
 
-    TEST_KEY_VALUE = 'a value'
-    TEST_KEY_TYPE = LeadKeyType::IDNUM
 
     describe LeadKey do
+      TEST_LEAD_KEY_VALUE = 'a value'
+      TEST_LEAD_KEY_TYPE = "test key"
+      
       it "should store type and value on construction" do
 
-        lead_key = LeadKey.new(TEST_KEY_VALUE, TEST_KEY_VALUE)
-        lead_key.key_type.should == TEST_KEY_VALUE
-        lead_key.key_value.should == TEST_KEY_VALUE
+        lead_key = LeadKey.new(TEST_LEAD_KEY_TYPE, TEST_KEY_VALUE)
+        lead_key.key_type.should == TEST_LEAD_KEY_TYPE
+        lead_key.key_value.should == TEST_LEAD_KEY_VALUE
       end
 
       it "should to_hash correctly" do
-        lead_key = LeadKey.new(TEST_KEY_VALUE, TEST_KEY_VALUE)
+        lead_key = LeadKey.new(TEST_LEAD_KEY_TYPE, TEST_LEAD_KEY_VALUE)
 
         lead_key.to_hash.should == {
-            :key_type => TEST_KEY_VALUE,
-            :key_value => TEST_KEY_VALUE
+            :key_type => TEST_LEAD_KEY_TYPE,
+            :key_value => TEST_LEAD_KEY_VALUE
         }
       end
     end

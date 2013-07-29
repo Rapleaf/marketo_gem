@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns1="http://www.marketo.com/mktows/">
+  <SOAP-ENV:Body>
+    <ns1:successListOperation>
+      <result>
+        <success>true</success>
+        <statusList xsi:nil="true"/>
+      </result>
+    </ns1:successListOperation>
+  </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

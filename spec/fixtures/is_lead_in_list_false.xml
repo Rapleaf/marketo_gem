@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://www.marketo.com/mktows/">
+  <SOAP-ENV:Body>
+    <ns1:successListOperation>
+      <result>
+        <success>true</success>
+        <statusList>
+          <leadStatus>
+            <leadKey>
+              <keyType>IDNUM</keyType>
+              <keyValue>12345</keyValue>
+            </leadKey>
+            <status>false</status>
+          </leadStatus>
+        </statusList>
+      </result>
+    </ns1:successListOperation>
+  </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

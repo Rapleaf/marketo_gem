@@ -177,18 +177,20 @@ module Grabcad
         end
       end
 
-      #Remove list operations until their implementation can be reviewed
-      # def add_to_list(list_key, email)
-      #   list_operation(list_key, ListOperationType::ADD_TO, email)
-      # end
+      #Returns true if the operation succeeded, false otherwise
+      def add_to_list(list_id, lead)
+        list_operation(list_id_key(list_id), ListOperationType::ADD_TO, lead.id)[:success_list_operation][:result][:success]
+      end
 
-      # def remove_from_list(list_key, email)
-      #   list_operation(list_key, ListOperationType::REMOVE_FROM, email)
-      # end
+      #Returns true if the operation succeeded, false otherwise
+      def remove_from_list(list_id, lead)
+        list_operation(list_id_key(list_id), ListOperationType::REMOVE_FROM, lead.id)[:success_list_operation][:result][:success]
+      end
 
-      # def is_member_of_list?(list_key, email)
-      #   list_operation(list_key, ListOperationType::IS_MEMBER_OF, email)
-      # end
+      #Returns true if the operation succeeded, false otherwise
+      def is_member_of_list?(list_id, lead)
+        list_operation(list_id_key(list_id), ListOperationType::IS_MEMBER_OF, lead.id)[:success_list_operation][:result][:status_list][:lead_status][:status]
+      end
 
       def enable_soap_debugging
         @client.pretty_print_xml = true
@@ -201,26 +203,31 @@ module Grabcad
         end
       end
 
+      # private
+      def list_operation(list_key, list_operation_type, id)
+      begin
+          response = send_request(:list_operation, {
+              :list_operation   => list_operation_type,
+              :list_key         => list_key.to_hash,
+              :strict           => 'false',
+              :list_member_list => {
+                  :lead_key => [
+                      {:key_type => LeadKeyType::IDNUM, :key_value => id}
+                  ]
+              }
+          })
+          return response
+        rescue Exception => e
+          log_exception e
+          return nil
+        end
+      end
+
+      def list_id_key(list_id)
+        ListKey.new(ListKeyType::MKTOLISTNAME, list_id)
+      end
+
       private
-      #Remove list operations until their implementation can be reviewed
-      #def list_operation(list_key, list_operation_type, email)
-      # begin
-      #     response = send_request(:list_operation, {
-      #         :list_operation   => list_operation_type,
-      #         :list_key         => list_key,
-      #         :strict           => 'false',
-      #         :list_member_list => {
-      #             :lead_key => [
-      #                 {:key_type => 'EMAIL', :key_value => email}
-      #             ]
-      #         }
-      #     })
-      #     return response
-      #   rescue Exception => e
-      #     log_exception e
-      #     return nil
-      #   end
-      # end
 
       def get_lead(lead_key)
         begin
