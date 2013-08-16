@@ -4,7 +4,7 @@ module Rapleaf
   module Marketo
     def self.new_client(access_key, secret_key, api_subdomain = 'na-i', api_version = '1_5', document_version = '1_4')
       client = Savon::Client.new do
-        wsdl.endpoint     = "https://#{api_subdomain}.marketo.com/soap/mktows/#{api_version}"
+        wsdl.endpoint     = "https://#{api_subdomain}.mktoapi.com/soap/mktows/#{api_version}"
         wsdl.document     = "http://app.marketo.com/soap/mktows/#{document_version}?WSDL"
         http.read_timeout = 90
         http.open_timeout = 90
