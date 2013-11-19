@@ -12,7 +12,7 @@ Gem::Specification.new do |gem|
   gem.authors      = ["James O'Brien"]
   gem.homepage     = "https://www.rapleaf.com/developers/marketo"
   gem.files        = Dir['lib/**/*.rb']
-  gem.require_path = ['lib']
+  gem.require_path = 'lib'
   gem.test_files   = Dir['spec/**/*_spec.rb']
   gem.version      = "1.4.0"
   gem.has_rdoc     = true
