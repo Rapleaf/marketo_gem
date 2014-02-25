@@ -177,7 +177,9 @@ module Rapleaf
       def get_lead(lead_key)
         begin
           response = send_request("ns1:paramsGetLead", {:lead_key => lead_key.to_hash})
-          return LeadRecord.from_hash(response[:success_get_lead][:result][:lead_record_list][:lead_record])
+          lead_record = response[:success_get_lead][:result][:lead_record_list][:lead_record]
+          lead_record = lead_record.first if lead_record.is_a?(Array)
+          return LeadRecord.from_hash(lead_record)
         rescue Exception => e
           @logger.log(e) if @logger
           return nil
