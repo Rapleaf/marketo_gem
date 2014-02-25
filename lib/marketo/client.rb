@@ -2,9 +2,10 @@ require File.expand_path('authentication_header', File.dirname(__FILE__))
 
 module Rapleaf
   module Marketo
-    def self.new_client(access_key, secret_key, api_subdomain = 'na-i', api_version = '1_5', document_version = '1_4')
+    def self.new_client(access_key, secret_key, api_domain = 'na-i', api_version = '1_5', document_version = '1_4')
+      api_domain = "#{api_domain}.marketo.com" unless api_domain.include?('.')
       client = Savon::Client.new do
-        wsdl.endpoint     = "https://#{api_subdomain}.marketo.com/soap/mktows/#{api_version}"
+        wsdl.endpoint     = "https://#{api_domain}/soap/mktows/#{api_version}"
         wsdl.document     = "http://app.marketo.com/soap/mktows/#{document_version}?WSDL"
         http.read_timeout = 90
         http.open_timeout = 90

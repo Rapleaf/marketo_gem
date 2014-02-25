@@ -3,6 +3,21 @@ require File.expand_path('../spec_helper', File.dirname(__FILE__))
 module Rapleaf
   module Marketo
 
+    describe ".new_client" do
+      it "defaults the api domain to na-i.marketo.com" do
+        client = Rapleaf::Marketo.new_client('access_key', 'secret_key')
+        client.instance_variable_get('@client').wsdl.endpoint.should =~ /na-i.marketo.com/
+      end
+      it "defaults the domain to .marketo.com given a subdomain" do
+        client = Rapleaf::Marketo.new_client('access_key', 'secret_key', 'na-j')
+        client.instance_variable_get('@client').wsdl.endpoint.should =~ /na-j.marketo.com/
+      end
+      it "allows a fully qualified domain" do
+        client = Rapleaf::Marketo.new_client('access_key', 'secret_key', '123-ABC-456.mktoapi.com')
+        client.instance_variable_get('@client').wsdl.endpoint.should =~ /123-ABC-456.mktoapi.com/
+      end
+    end
+
     describe Client do
       EMAIL   = "some@email.com"
       IDNUM   = 29
