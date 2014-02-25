@@ -116,6 +116,55 @@ module Rapleaf
           client.get_lead_by_email(EMAIL).should == expected_lead_record
         end
 
+        it "handles multiple records with same email" do
+          savon_client          = mock('savon_client')
+          authentication_header = mock('authentication_header')
+          client                = Rapleaf::Marketo::Client.new(savon_client, authentication_header)
+          response_hash         = {
+              :success_get_lead => {
+                  :result => {
+                      :count            => 1,
+                      :lead_record_list => {
+                          :lead_record => [
+                              {
+                                :email                 => EMAIL,
+                                :lead_attribute_list   => {
+                                    :attribute => [
+                                        {:attr_name => 'name1', :attr_type => 'string', :attr_value => 'val1'}
+                                    ]
+                                },
+                                :foreign_sys_type      => nil,
+                                :foreign_sys_person_id => nil,
+                                :id                    => IDNUM.to_s
+                            },
+                            {
+                                :email                 => EMAIL,
+                                :lead_attribute_list   => {
+                                    :attribute => [
+                                        {:attr_name => 'name1', :attr_type => 'string', :attr_value => 'val2'}
+                                    ]
+                                },
+                                :foreign_sys_type      => nil,
+                                :foreign_sys_person_id => nil,
+                                :id                    => (IDNUM + 1).to_s
+                            }
+                          ]
+                      }
+                  }
+              }
+          }
+          expect_request(savon_client,
+                         authentication_header,
+                         equals_matcher({:lead_key => {
+                             :key_value => EMAIL,
+                             :key_type  => LeadKeyType::EMAIL}}),
+                         'ns1:paramsGetLead',
+                         response_hash)
+          expected_lead_record = LeadRecord.new(EMAIL, IDNUM)
+          expected_lead_record.set_attribute('name1', 'val1')
+          client.get_lead_by_email(EMAIL).should == expected_lead_record
+        end
+
         it "should have the correct body format on sync_lead_record" do
           savon_client          = mock('savon_client')
           authentication_header = mock('authentication_header')
