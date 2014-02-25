@@ -110,7 +110,7 @@ module Rapleaf
                    :lead_attribute_list => {
                        :attribute => attributes}}})
           return LeadRecord.from_hash(response[:success_sync_lead][:result][:lead_record])
-        rescue Exception => e
+        rescue => e
           @logger.log(e) if @logger
           return nil
         end
@@ -136,7 +136,7 @@ module Rapleaf
                     :id => idnum
                   }})
           return LeadRecord.from_hash(response[:success_sync_lead][:result][:lead_record])
-        rescue Exception => e
+        rescue => e
           @logger.log(e) if @logger
           return nil
         end
@@ -168,7 +168,7 @@ module Rapleaf
               }
           })
           return response
-        rescue Exception => e
+        rescue => e
           @logger.log(e) if @logger
           return nil
         end
@@ -178,7 +178,7 @@ module Rapleaf
         begin
           response = send_request("ns1:paramsGetLead", {:lead_key => lead_key.to_hash})
           return LeadRecord.from_hash(response[:success_get_lead][:result][:lead_record_list][:lead_record])
-        rescue Exception => e
+        rescue => e
           @logger.log(e) if @logger
           return nil
         end

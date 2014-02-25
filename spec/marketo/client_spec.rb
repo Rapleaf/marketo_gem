@@ -17,7 +17,7 @@ module Rapleaf
           savon_client          = mock('savon_client').as_null_object
           authentication_header = mock('authentication_header').as_null_object
           client                = Rapleaf::Marketo::Client.new(savon_client, authentication_header)
-          savon_client.should_receive(:request).and_raise Exception
+          savon_client.should_receive(:request).and_raise RuntimeError
           client.get_lead_by_email(EMAIL).should be_nil
         end
 
@@ -25,7 +25,7 @@ module Rapleaf
           savon_client          = mock('savon_client').as_null_object
           authentication_header = mock('authentication_header').as_null_object
           client                = Rapleaf::Marketo::Client.new(savon_client, authentication_header)
-          savon_client.should_receive(:request).and_raise Exception
+          savon_client.should_receive(:request).and_raise RuntimeError
           client.sync_lead(EMAIL, FIRST, LAST, COMPANY, MOBILE).should be_nil
         end
       end
