@@ -12,24 +12,6 @@ module Rapleaf
       MOBILE  = '415 123 456'
       API_KEY = 'API123KEY'
 
-      context 'Exception handling' do
-        it "should return nil if any exception is raised on get_lead request" do
-          savon_client          = double('savon_client').as_null_object
-          authentication_header = double('authentication_header').as_null_object
-          client                = Rapleaf::Marketo::Client.new(savon_client, authentication_header)
-          savon_client.should_receive(:request).and_raise Exception
-          client.get_lead_by_email(EMAIL).should be_nil
-        end
-
-        it "should return nil if any exception is raised on sync_lead request" do
-          savon_client          = double('savon_client').as_null_object
-          authentication_header = double('authentication_header').as_null_object
-          client                = Rapleaf::Marketo::Client.new(savon_client, authentication_header)
-          savon_client.should_receive(:request).and_raise Exception
-          client.sync_lead(EMAIL, FIRST, LAST, COMPANY, MOBILE).should be_nil
-        end
-      end
-
       context 'Client interaction' do
         it "should have the correct body format on get_lead_by_idnum" do
           savon_client          = double('savon_client')

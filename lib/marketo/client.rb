@@ -97,49 +97,39 @@ module Rapleaf
       end
 
       def sync_lead_record(lead_record)
-        begin
-          attributes = []
-          lead_record.each_attribute_pair do |name, value|
-            attributes << {:attr_name => name, :attr_type => 'string', :attr_value => value}
-          end
-
-          response = send_request("ns1:paramsSyncLead", {
-              :return_lead => true,
-              :lead_record =>
-                  {:email               => lead_record.email,
-                   :lead_attribute_list => {
-                       :attribute => attributes}}})
-          return LeadRecord.from_hash(response[:success_sync_lead][:result][:lead_record])
-        rescue Exception => e
-          @logger.log(e) if @logger
-          return nil
+        attributes = []
+        lead_record.each_attribute_pair do |name, value|
+          attributes << {:attr_name => name, :attr_type => 'string', :attr_value => value}
         end
+
+        response = send_request("ns1:paramsSyncLead", {
+            :return_lead => true,
+            :lead_record =>
+                {:email               => lead_record.email,
+                 :lead_attribute_list => {
+                     :attribute => attributes}}})
+        return LeadRecord.from_hash(response[:success_sync_lead][:result][:lead_record])
       end
 
       def sync_lead_record_on_id(lead_record)
         idnum = lead_record.idnum
         raise 'lead record id not set' if idnum.nil?
 
-        begin
-          attributes = []
-          lead_record.each_attribute_pair do |name, value|
-              attributes << {:attr_name => name, :attr_type => 'string', :attr_value => value}
-          end
-
-          attributes << {:attr_name => 'Id', :attr_type => 'string', :attr_value => idnum.to_s}
-
-          response = send_request("ns1:paramsSyncLead", {
-              :return_lead => true,
-              :lead_record =>
-                  {
-                    :lead_attribute_list => { :attribute => attributes},
-                    :id => idnum
-                  }})
-          return LeadRecord.from_hash(response[:success_sync_lead][:result][:lead_record])
-        rescue Exception => e
-          @logger.log(e) if @logger
-          return nil
+        attributes = []
+        lead_record.each_attribute_pair do |name, value|
+            attributes << {:attr_name => name, :attr_type => 'string', :attr_value => value}
         end
+
+        attributes << {:attr_name => 'Id', :attr_type => 'string', :attr_value => idnum.to_s}
+
+        response = send_request("ns1:paramsSyncLead", {
+            :return_lead => true,
+            :lead_record =>
+                {
+                  :lead_attribute_list => { :attribute => attributes},
+                  :id => idnum
+                }})
+        return LeadRecord.from_hash(response[:success_sync_lead][:result][:lead_record])
       end
 
       def add_to_list(list_key, email)
@@ -156,32 +146,22 @@ module Rapleaf
 
       private
       def list_operation(list_key, list_operation_type, email)
-        begin
-          response = send_request("ns1:paramsListOperation", {
-              :list_operation   => list_operation_type,
-              :list_key         => list_key,
-              :strict           => 'false',
-              :list_member_list => {
-                  :lead_key => [
-                      {:key_type => 'EMAIL', :key_value => email}
-                  ]
-              }
-          })
-          return response
-        rescue Exception => e
-          @logger.log(e) if @logger
-          return nil
-        end
+        response = send_request("ns1:paramsListOperation", {
+            :list_operation   => list_operation_type,
+            :list_key         => list_key,
+            :strict           => 'false',
+            :list_member_list => {
+                :lead_key => [
+                    {:key_type => 'EMAIL', :key_value => email}
+                ]
+            }
+        })
+        return response
       end
 
       def get_lead(lead_key)
-        begin
-          response = send_request("ns1:paramsGetLead", {:lead_key => lead_key.to_hash})
-          return LeadRecord.from_hash(response[:success_get_lead][:result][:lead_record_list][:lead_record])
-        rescue Exception => e
-          @logger.log(e) if @logger
-          return nil
-        end
+        response = send_request("ns1:paramsGetLead", {:lead_key => lead_key.to_hash})
+        return LeadRecord.from_hash(response[:success_get_lead][:result][:lead_record_list][:lead_record])
       end
 
       def send_request(namespace, body)
