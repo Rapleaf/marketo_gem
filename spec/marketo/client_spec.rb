@@ -14,16 +14,16 @@ module Rapleaf
 
       context 'Exception handling' do
         it "should return nil if any exception is raised on get_lead request" do
-          savon_client          = mock('savon_client').as_null_object
-          authentication_header = mock('authentication_header').as_null_object
+          savon_client          = double('savon_client').as_null_object
+          authentication_header = double('authentication_header').as_null_object
           client                = Rapleaf::Marketo::Client.new(savon_client, authentication_header)
           savon_client.should_receive(:request).and_raise Exception
           client.get_lead_by_email(EMAIL).should be_nil
         end
 
         it "should return nil if any exception is raised on sync_lead request" do
-          savon_client          = mock('savon_client').as_null_object
-          authentication_header = mock('authentication_header').as_null_object
+          savon_client          = double('savon_client').as_null_object
+          authentication_header = double('authentication_header').as_null_object
           client                = Rapleaf::Marketo::Client.new(savon_client, authentication_header)
           savon_client.should_receive(:request).and_raise Exception
           client.sync_lead(EMAIL, FIRST, LAST, COMPANY, MOBILE).should be_nil
@@ -32,8 +32,8 @@ module Rapleaf
 
       context 'Client interaction' do
         it "should have the correct body format on get_lead_by_idnum" do
-          savon_client          = mock('savon_client')
-          authentication_header = mock('authentication_header')
+          savon_client          = double('savon_client')
+          authentication_header = double('authentication_header')
           client                = Rapleaf::Marketo::Client.new(savon_client, authentication_header)
           response_hash         = {
               :success_get_lead => {
@@ -75,8 +75,8 @@ module Rapleaf
         end
 
         it "should have the correct body format on get_lead_by_email" do
-          savon_client          = mock('savon_client')
-          authentication_header = mock('authentication_header')
+          savon_client          = double('savon_client')
+          authentication_header = double('authentication_header')
           client                = Rapleaf::Marketo::Client.new(savon_client, authentication_header)
           response_hash         = {
               :success_get_lead => {
@@ -117,8 +117,8 @@ module Rapleaf
         end
 
         it "should have the correct body format on sync_lead_record" do
-          savon_client          = mock('savon_client')
-          authentication_header = mock('authentication_header')
+          savon_client          = double('savon_client')
+          authentication_header = double('authentication_header')
           client                = Rapleaf::Marketo::Client.new(savon_client, authentication_header)
           response_hash         = {
               :success_sync_lead => {
@@ -172,8 +172,8 @@ module Rapleaf
         end
 
         it "should have the correct body format on sync_lead" do
-          savon_client          = mock('savon_client')
-          authentication_header = mock('authentication_header')
+          savon_client          = double('savon_client')
+          authentication_header = double('authentication_header')
           client                = Rapleaf::Marketo::Client.new(savon_client, authentication_header)
           response_hash         = {
               :success_sync_lead => {
@@ -248,8 +248,8 @@ module Rapleaf
           LIST_KEY = 'awesome leads list'
 
           before(:each) do
-            @savon_client          = mock('savon_client')
-            @authentication_header = mock('authentication_header')
+            @savon_client          = double('savon_client')
+            @authentication_header = double('authentication_header')
             @client                = Rapleaf::Marketo::Client.new(@savon_client, @authentication_header)
           end
 
@@ -333,11 +333,11 @@ module Rapleaf
       end
 
       def expect_request(savon_client, authentication_header, expected_body_matcher, expected_namespace, response_hash)
-        header_hash       = stub('header_hash')
-        soap_response     = stub('soap_response')
-        request_namespace = mock('namespace')
-        request_header    = mock('request_header')
-        soap_request      = mock('soap_request')
+        header_hash       = double('header_hash')
+        soap_response     = double('soap_response')
+        request_namespace = double('namespace')
+        request_header    = double('request_header')
+        soap_request      = double('soap_request')
         authentication_header.should_receive(:set_time)
         authentication_header.should_receive(:to_hash).and_return(header_hash)
         request_namespace.should_receive(:[]=).with("xmlns:ns1", "http://www.marketo.com/mktows/")
