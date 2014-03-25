@@ -144,6 +144,15 @@ module Rapleaf
         list_operation(list_key, ListOperationType::IS_MEMBER_OF, email)
       end
 
+      def sync_multiple_leads(leads, opts = {dedup_enabled: true})
+        send_request("ns1:paramsSyncMultipleLeads", {
+          lead_record_list: {
+            lead_record: leads
+          },
+          dedup_enabled: opts[:dedup_enabled]
+        })
+      end
+
       private
       def list_operation(list_key, list_operation_type, email)
         response = send_request("ns1:paramsListOperation", {
