@@ -99,7 +99,7 @@ module Rapleaf
       def sync_lead_record(lead_record)
         attributes = []
         lead_record.each_attribute_pair do |name, value|
-          attributes << {:attr_name => name, :attr_type => 'string', :attr_value => value}
+          attributes << {:attr_name => name, :attr_type => inferred_value_type_for(value), :attr_value => value}
         end
 
         response = send_request("ns1:paramsSyncLead", {
@@ -117,7 +117,7 @@ module Rapleaf
 
         attributes = []
         lead_record.each_attribute_pair do |name, value|
-            attributes << {:attr_name => name, :attr_type => 'string', :attr_value => value}
+            attributes << {:attr_name => name, :attr_type => inferred_value_type_for(value), :attr_value => value}
         end
 
         attributes << {:attr_name => 'Id', :attr_type => 'string', :attr_value => idnum.to_s}
@@ -184,6 +184,15 @@ module Rapleaf
           soap.namespaces["xmlns:ns1"]            = "http://www.marketo.com/mktows/"
           soap.body                               = body
           soap.header["ns1:AuthenticationHeader"] = header
+        end
+      end
+
+      def inferred_value_type_for(value)
+        case value
+        when DateTime
+          'datetime'
+        else
+          'string'
         end
       end
     end
