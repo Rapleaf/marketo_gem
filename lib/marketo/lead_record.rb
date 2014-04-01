@@ -11,7 +11,8 @@ module Rapleaf
       # hydrates an instance from a savon hash returned form the marketo API
       def self.from_hash(savon_hash)
         lead_record = LeadRecord.new(savon_hash[:email], savon_hash[:id].to_i)
-        Array(savon_hash[:lead_attribute_list][:attribute]).each do |attribute|
+        attributes = savon_hash[:lead_attribute_list][:attribute]
+        (attributes.is_a?(Array) ? attributes : [attributes]).each do |attribute|
           lead_record.set_attribute(attribute[:attr_name], attribute[:attr_value])
         end
         lead_record

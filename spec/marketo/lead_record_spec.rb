@@ -81,6 +81,24 @@ module Rapleaf
 
         actual.should == expected
       end
+
+      it "should be instantiable from a savon hash with only a single attribute" do
+        savon_hash = {
+          :email => EMAIL,
+          :foreign_sys_type => nil,
+          :lead_attribute_list => {
+            :attribute =>
+              {:attr_name=>"usertype", :attr_type=>"string", :attr_value=>"Lead"}
+          },
+          :foreign_sys_person_id => nil,
+          :id => IDNUM
+        }
+
+        actual = LeadRecord.from_hash(savon_hash)
+        expected = LeadRecord.new(EMAIL, IDNUM)
+        expected.set_attribute('usertype', 'Lead')
+        actual.should == expected
+      end
     end
   end
 end
