@@ -1,0 +1,3 @@
+=== 0.8 / 2014-04-08
+
+* First release as marketo-api-ruby. Features a substantially restructured API.
