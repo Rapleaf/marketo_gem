@@ -21,12 +21,12 @@ class MarketoAPI::ClientProxy
     # class name.
     def inherited(klass)
       name = klass.name.split(/::/).last.downcase.to_sym
-      varn = :"@#{name}"
 
-      MarketoAPI::Client.send(:define_method, name) do
-        instance_variable_get(varn) ||
-          instance_variable_set(varn, klass.new(self))
-      end
+      MarketoAPI::Client.class_eval <<-EOS
+        def #{name}
+          @#{name} ||= #{klass}.new(self)
+        end
+      EOS
     end
   end
 

@@ -30,9 +30,11 @@ class MarketoAPI::Campaigns < MarketoAPI::ClientProxy
   def for_source(source, name = nil, exact_name = nil)
     call(
       :get_campaigns_for_source,
-      source:      resolve_source(source),
-      name:        name,
-      exact_name:  exact_name
+      {
+        source:      resolve_source(source),
+        name:        name,
+        exact_name:  exact_name
+      }.delete_if(&MarketoAPI::MINIMIZE_HASH)
     )
   end
 
@@ -101,9 +103,11 @@ class MarketoAPI::Campaigns < MarketoAPI::ClientProxy
         ':campaign_id, :campaign_name, or :program_name must be provided'
     end
 
-    if tokens = options.delete(:program_tokens) && !options[:program_name]
-      raise KeyError,
-        ':program_name must be provided when using :program_tokens'
+    if (tokens = options.delete(:program_tokens)) && !tokens.empty?
+      if !options[:program_name]
+        raise KeyError,
+          ':program_name must be provided when using :program_tokens'
+      end
     end
 
     call(
@@ -139,7 +143,7 @@ class MarketoAPI::Campaigns < MarketoAPI::ClientProxy
   #
   # === Optional Parameters
   #
-  # +campaign_run_at+:: The time to run the scheduled campaign.
+  # +run_at+::          The time to run the scheduled campaign.
   # +program_tokens+::  An array of program tokens in the form:
   #                     <tt>{ attrib: { name: name, value: value } }</tt>
   #                     This will be made easier to manage in the future.
@@ -155,19 +159,19 @@ class MarketoAPI::Campaigns < MarketoAPI::ClientProxy
       {
         program_name: program_name,
         campaign_name: campaign_name,
-        campaign_run_at: options[:campaign_run_at],
+        campaign_run_at: options[:run_at],
         program_token_list: options[:program_tokens]
       }.delete_if(&MarketoAPI::MINIMIZE_HASH)
     )
   end
 
-  SOURCES.each_pair { |name, enum|
-    define_method(:"for_#{name}") do |name = nil, exact_name = nil|
+  SOURCES.each_pair { |source, enum|
+    define_method(:"for_#{source}") do |name = nil, exact_name = nil|
       for_source(enum, name, exact_name)
     end
 
-    define_method(:"request_#{name}") do |options = {}|
-      request(options.merge(source: name))
+    define_method(:"request_#{source}") do |options = {}|
+      request(options.merge(source: enum))
     end
   }
 

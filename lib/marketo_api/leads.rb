@@ -60,7 +60,7 @@ class MarketoAPI::Leads < MarketoAPI::ClientProxy
       dedup_enabled: options[:dedup_enabled],
       lead_record_list: transform_param_list(:sync, leads)
     )
-    extract_from_response(result, :lead_record_list) do |list|
+    extract_from_response(response, :lead_record_list) do |list|
       list.each do |record|
         MarketoAPI::Lead.from_soap_hash(record[:lead_record]) do |lead|
           lead.proxy = self
