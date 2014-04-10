@@ -5,7 +5,7 @@ class TestMarketoAPICampaigns < Minitest::Test
 
   def setup
     super
-    @subject   = @client.campaigns
+    @subject = @client.campaigns
   end
 
   def test_for_marketo

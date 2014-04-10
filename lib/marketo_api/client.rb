@@ -124,7 +124,8 @@ class MarketoAPI::Client
   end
 
   private
-  # Implements the Marketo {Authentication Signature}[http://developers.marketo.com/documentation/soap/signature-algorithm/].
+  # Implements the Marketo
+  # {Authentication Signature}[http://developers.marketo.com/documentation/soap/signature-algorithm/].
   class AuthHeader #:nodoc:
     DIGEST = OpenSSL::Digest.new('sha1')
     private_constant :DIGEST

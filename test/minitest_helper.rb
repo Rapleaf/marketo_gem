@@ -15,7 +15,11 @@ try_require 'minitest/emoji'
 module MarketoTestHelper
   def setup
     super
-    @client = MarketoAPI.client(user_id: 'user', encryption_key: 'key')
+    @client = setup_client
+  end
+
+  def setup_client(options = {})
+    MarketoAPI.client(options.merge(user_id: 'user', encryption_key: 'key'))
   end
 
   attr_reader :subject

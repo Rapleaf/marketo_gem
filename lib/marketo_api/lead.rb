@@ -114,7 +114,7 @@ class MarketoAPI::Lead
   def proxy=(value)
     @proxy = case value
              when nil
-               @proxy
+               defined?(@proxy) && @proxy
              when MarketoAPI::Leads
                value
              when MarketoAPI::ClientProxy
@@ -193,7 +193,7 @@ class MarketoAPI::Lead
   def params_for_sync
     {
       return_lead: true,
-      market_cookie: cookie,
+      marketo_cookie: cookie,
       lead_record: {
         email:                  email,
         id:                     id,
