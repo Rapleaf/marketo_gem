@@ -13,6 +13,14 @@ require 'minitest/autorun'
 try_require 'minitest/emoji'
 
 module MarketoTestHelper
+  ARGS_STUB = ->(*args) {
+    def args.to_hash
+      self
+    end
+
+    args
+  }
+
   def setup
     super
     @client = setup_client
@@ -25,13 +33,13 @@ module MarketoTestHelper
   attr_reader :subject
 
   def stub_specialized method, object = subject, &block
-    object.stub method, ->(*args) { args } do
+    object.stub method, ARGS_STUB do
       block.call if block
     end
   end
 
   def stub_soap_call object = subject, &block
-    object.stub :call, ->(*args) { args } do
+    object.stub :call, ARGS_STUB do
       block.call if block
     end
   end

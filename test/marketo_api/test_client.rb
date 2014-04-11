@@ -41,14 +41,7 @@ class TestMarketoAPIClient < Minitest::Test
   end
 
   def stub_savon callable = nil, &block
-    callable ||= ->(*args) {
-      def args.to_hash
-        self
-      end
-
-      args
-    }
-
+    callable ||= ARGS_STUB
     subject.instance_variable_get(:@savon).stub :call, callable do
       block.call if block
     end

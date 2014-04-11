@@ -243,6 +243,7 @@ class MarketoAPI::Lead
 
     private
     def key_type(key)
+      key = key.to_sym
       res = if KEY_TYPES.include? key
                key
              else

@@ -10,13 +10,6 @@ class MarketoAPI::Lists < MarketoAPI::ClientProxy
 
   TYPES = NAMED_TYPES.values.freeze
 
-  OPERATIONS = {
-    add:      :ADDTOLIST,
-    remove:   :REMOVEFROMLIST,
-    member?:  :ISMEMBEROFLIST,
-  }.freeze
-  private_constant :OPERATIONS
-
   ##
   # :method: add
   # :call-seq:
@@ -65,7 +58,11 @@ class MarketoAPI::Lists < MarketoAPI::ClientProxy
   #
   # Add leads to a Marketo list.
 
-  OPERATIONS.each do |name, operation|
+  {
+    add:      :ADDTOLIST,
+    remove:   :REMOVEFROMLIST,
+    member?:  :ISMEMBEROFLIST,
+  }.each do |name, operation|
     define_method(name) do |list_key, options = {}|
       list_operation(operation, list_key, options)
     end

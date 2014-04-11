@@ -11,15 +11,22 @@ class MarketoAPI::Leads < MarketoAPI::ClientProxy
   #   get(lead_key)
   #   get(key_type, key_value)
   def get(type_or_key, value = nil)
-    key = if type_or_key.kind_of?(Hash)
-            if type_or_key[:lead_key]
-              type_or_key
-            else
-              raise ArgumentError, ':type_or_key is not a valid lead key'
+    key = case type_or_key
+          when Hash
+            if lk = type_or_key[:lead_key]
+              if MarketoAPI::Lead.send(:key_type, lk[:key_type])
+                type_or_key
+              end
             end
+          when MarketoAPI::Lead
+            transform_param(__method__, type_or_key)
           else
             MarketoAPI::Lead.key(type, value)
           end
+
+    unless key
+      raise ArgumentError, ':type_or_key is not a valid lead key'
+    end
     extract_from_response(call(:get_lead, key), :lead_record_list) { |record|
       MarketoAPI::Lead.from_soap_hash(record[:lead_record]) do |lead|
         lead.proxy = self
@@ -32,7 +39,7 @@ class MarketoAPI::Leads < MarketoAPI::ClientProxy
   # returning a MarketoAPI::Lead object.
   def sync(lead_record)
     extract_from_response(
-      call(:sync_lead, lead_record.params_for_sync),
+      call(:sync_lead, transform_param(__method__, lead_record)),
     ) { |record|
       MarketoAPI::Lead.from_soap_hash(record[:lead_record]) do |lead|
         lead.proxy = self
@@ -134,6 +141,7 @@ class MarketoAPI::Leads < MarketoAPI::ClientProxy
   # :call-seq: get_by_salesforce_opportunity_id(salesforce_opportunity_id)
   #
   # Gets the Lead by the provided SFDC Opportunity ID.
+
   MarketoAPI::Lead::NAMED_KEYS.each_pair { |name, key|
     define_method(:"get_by_#{name}") do |value|
       get(key, value)
