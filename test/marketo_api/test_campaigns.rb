@@ -87,6 +87,12 @@ class TestMarketoAPICampaigns < Minitest::Test
     }
   end
 
+  def test_request_with_campaign_id_and_name
+    assert_raises(ArgumentError) {
+      subject.request(lead: :foo, campaign_id: 5, campaign_name: 'Five')
+    }
+  end
+
   def test_request_bad_source
     assert_raises(ArgumentError) {
       subject.request(lead: :foo, campaign_id: 5, source: :bad_source)

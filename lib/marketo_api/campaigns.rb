@@ -103,6 +103,11 @@ class MarketoAPI::Campaigns < MarketoAPI::ClientProxy
         ':campaign_id, :campaign_name, or :program_name must be provided'
     end
 
+    if options.has_key?(:campaign_id) && options.has_key?(:campaign_name)
+      raise ArgumentError,
+        ':campaign_id and :campaign_name are mutually exclusive'
+    end
+
     if (tokens = options.delete(:program_tokens)) && !tokens.empty?
       if !options[:program_name]
         raise KeyError,
