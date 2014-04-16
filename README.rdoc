@@ -1,0 +1,105 @@
+= marketo-api-ruby
+
+home :: https://github.com/ClearFit/marketo-api-ruby
+code :: https://github.com/ClearFit/marketo-api-ruby
+bugs :: https://github.com/ClearFit/marketo-api-ruby/issues
+rdoc :: https://rdoc.info/gems/marketo-api-ruby
+continuous integration :: {<img src="https://travis-ci.org/ClearFit/marketo-api-ruby.png" />}[https://travis-ci.org/ClearFit/marketo-api-ruby]
+test coverage :: {<img src="https://coveralls.io/repos/ClearFit/marketo-api-ruby/badge.png" alt="Coverage Status" />}[https://coveralls.io/r/ClearFit/marketo-api-ruby]
+
+== Description
+
+MarketoAPI (marketo-api-ruby) provides a native Ruby interface to the
+{Marketo SOAP API}[http://developers.marketo.com/documentation/soap/], using
+{savon}[https://github.com/savonrb/savon]. While understanding the Marketo SOAP
+API is necessary for using marketo-api-ruby, it is an explicit goal that
+working with MarketoAPI not feel like working with a hinky Java port.
+
+This is release 0.8, targeting Marketo API version
+{2.3}[http://app.marketo.com/soap/mktows/2_3?WSDL].
+
+=== Features/Problems
+
+The marketo-api-ruby implementation of the Marketo SOAP API is incomplete, but
+is scheduled to be complete against Marketo SOAP API 2.3 for the version 1.0
+release; this will take some time.
+
+- Marketo Object (MObject) operations are 80% implemented.
+  - Not implemented: +syncMObjects+
+  - Improvements will be made to the criteria-building interface and the
+    association-building interface.
+- Marketo Custom Object operations are not yet implemented.
+- Marketo Lead operations are 37% implemented.
+  - Not implemented: +getMultipleLeads+, +mergeLeads+, +getLeadActivity+,
+    +getLeadChanges+
+- Marketo Campaign operations are 90% implemented.
+  - The +requestCampaign+ API is currently awkward around managing program
+    tokens (+programTokenList+ in the SOAP API).
+  - The +scheduleCampaign+ API is currently awkward around managing program
+    tokens (+programTokenList+ in the SOAP API).
+- Marketo List opertions are 100% implemented.
+
+== Synopsis
+
+    require 'marketo_api' # Only required if not loaded by Bundler
+    marketo = MarketoAPI.client(
+      api_subdomain:  '123-ABC-456',
+      user_id:        'my-api-user-id',
+      encryption_key: 'my-api-encryption-key'
+    )
+
+    # Get a lead by email, and sync it back to Marketo.
+    lead = marketo.leads.get_by_email('mork@ork.com')
+    lead.email = 'mindy@ork.com'
+    lead.sync!
+
+    # Get campaigns for marketo (MKTOWS)
+    puts marketo.campaigns.for_marketo
+
+    # Delete Opportunity 75.
+    marketo.mobjects.delete MarketoAPI::MObject.opportunity(75)
+
+    # Get all Marketo programs 
+
+== Install
+
+Add to your application's Gemfile:
+
+    gem 'marketo-api-ruby'
+
+Or install manually:
+
+    gem install marketo-api-ruby
+
+== Developers
+
+After checking out the source, run:
+
+  $ rake newb
+
+This task will install any missing dependencies, run the tests/specs,
+and generate the RDoc.
+
+== marketo-api-ruby Modified Semantic Versioning
+
+The marketo-api-ruby library tracks an externally versioned API; this is not
+fully compatible with all aspects of {Semantic Versioning}[http://semver.org/]. 
+
+1. MAJOR versions will be updated when targeting a new major version of the
+   Marketo API, if Marketo makes incompatible changes to its API in minor
+   versions, *or* when incompatible marketo-api-ruby API changes are made. The
+   release notes will identify the cause of the update.
+2. MINOR versions will be updated when targeting a new minor version of the
+   Marketo API (e.g., Marketo version 2.2 to 2.3).
+3. PATCH version when backwards-compatible bug fixes are made.
+
+Additionally, each release will clearly identify which Marketo API it targets
+as its baseline. If a release is made without a PATCH level, it can be assumed
+to be zero.
+
+In practical terms, MAJOR versions will only be updated if you cannot use an
+earlier API version for an existing query (such as +Marketo::Lead#sync+).
+
+:include: Contributing.rdoc
+
+:include: Licence.rdoc
