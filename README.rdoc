@@ -1,11 +1,11 @@
 = marketo-api-ruby
 
-home :: https://github.com/halostatue/marketo-api-ruby
-code :: https://github.com/halostatue/marketo-api-ruby
-bugs :: https://github.com/halostatue/marketo-api-ruby/issues
+home :: https://github.com/ClearFit/marketo-api-ruby
+code :: https://github.com/ClearFit/marketo-api-ruby
+bugs :: https://github.com/ClearFit/marketo-api-ruby/issues
 rdoc :: https://rdoc.info/gems/marketo-api-ruby
-continuous integration :: {<img src="https://travis-ci.org/halostatue/marketo-api-ruby.png" />}[https://travis-ci.org/halostatue/marketo-api-ruby]
-test coverage :: {<img src="https://coveralls.io/repos/halostatue/marketo-api-ruby/badge.png" alt="Coverage Status" />}[https://coveralls.io/r/halostatue/marketo-api-ruby]
+continuous integration :: {<img src="https://travis-ci.org/ClearFit/marketo-api-ruby.png" />}[https://travis-ci.org/ClearFit/marketo-api-ruby]
+test coverage :: {<img src="https://coveralls.io/repos/ClearFit/marketo-api-ruby/badge.png" alt="Coverage Status" />}[https://coveralls.io/r/ClearFit/marketo-api-ruby]
 
 == Description
 
