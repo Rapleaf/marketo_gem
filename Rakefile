@@ -11,7 +11,7 @@ Hoe.plugin :minitest
 Hoe.plugin :travis
 Hoe.plugin :email unless ENV['CI'] or ENV['TRAVIS']
 
-Hoe.spec "marketo-api-ruby" do
+spec = Hoe.spec "marketo-api-ruby" do
   developer('Austin Ziegler', 'halostatue@gmail.com')
   self.need_tar = false
   self.require_ruby_version '>= 1.9.2'
@@ -36,6 +36,7 @@ Hoe.spec "marketo-api-ruby" do
 end
 
 namespace :test do
+  desc "Submit test coverage to Coveralls"
   task :coveralls do
     spec.test_prelude = [
       'require "psych"',
@@ -48,6 +49,7 @@ namespace :test do
     Rake::Task['test'].execute
   end
 
+  desc "Generate a test coverage report"
   task :coverage do
     spec.test_prelude = [
       'require "simplecov"',

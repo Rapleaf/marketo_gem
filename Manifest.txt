@@ -26,5 +26,7 @@ test/marketo_api/test_client.rb
 test/marketo_api/test_lead.rb
 test/marketo_api/test_leads.rb
 test/marketo_api/test_lists.rb
+test/marketo_api/test_mobject.rb
+test/marketo_api/test_mobjects.rb
 test/minitest_helper.rb
 test/test_marketo_api.rb
