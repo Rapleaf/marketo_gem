@@ -11,13 +11,16 @@ rvm:
   - rbx
 matrix:
   allow_failures:
-    - rvm: rbx
+    - rvm:
+      - rbx
+      - 1.9.2
 gemfile:
   - Gemfile
 before_script:
   - |
     case "${TRAVIS_RUBY_VERSION}" in
       rbx*)
+        gem install psych
         gem install -v '~> 2.0' rubysl
         ;;
     esac
