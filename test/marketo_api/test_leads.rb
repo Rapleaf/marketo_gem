@@ -52,155 +52,34 @@ class TestMarketoAPILeads < Minitest::Test
     end
   end
 
+  def test_named_getters
+    MarketoAPI::Lead::NAMED_KEYS.each_pair do |name, key|
+      method = :"get_by_#{name}"
+      assert subject.respond_to? method
+
+      stub_specialized :get do
+        assert_equal key, subject.send(method, 42).first
+      end
+    end
+  end
+
   def test_get_type_and_value
-    subject.stub :call, GET_LEAD_STUB do
-      lead_key = MarketoAPI::Lead.key('id', 416)
-      lead = subject.get(lead_key)
-      assert_instance_of MarketoAPI::Lead, lead
-      assert_equal 416, lead.id
-      assert_equal :get_lead, lead[:Method]
-      assert_equal lead_key, lead[:LeadKey]
-    end
-  end
+    MarketoAPI::Lead::NAMED_KEYS.each_pair do |name, key|
+      subject.stub :call, GET_LEAD_STUB do
+        lead_key = MarketoAPI::Lead.key(name, 416)
+        lead = subject.get(name, 416)
+        assert_instance_of MarketoAPI::Lead, lead
+        assert_equal 416, lead.id
+        assert_equal :get_lead, lead[:Method]
+        assert_equal lead_key, lead[:LeadKey]
 
-  def test_get_by_id
-    assert subject.respond_to? :get_by_id
-    stub_specialized :get do
-      assert_equal :IDNUM, subject.get_by_id(42).first
-    end
-    subject.stub :call, GET_LEAD_STUB do
-      lead_key = MarketoAPI::Lead.key('id', 416)
-      lead = subject.get(lead_key)
-      assert_instance_of MarketoAPI::Lead, lead
-      assert_equal 416, lead.id
-      assert_equal :get_lead, lead[:Method]
-      assert_equal lead_key, lead[:LeadKey]
-    end
-  end
-
-  def test_get_by_cookie
-    assert subject.respond_to? :get_by_cookie
-    stub_specialized :get do
-      assert_equal :COOKIE, subject.get_by_cookie(42).first
-    end
-    subject.stub :call, GET_LEAD_STUB do
-      lead_key = MarketoAPI::Lead.key('cookie', 416)
-      lead = subject.get(lead_key)
-      assert_instance_of MarketoAPI::Lead, lead
-      assert_equal 416, lead.id
-      assert_equal :get_lead, lead[:Method]
-      assert_equal lead_key, lead[:LeadKey]
-    end
-  end
-
-  def test_get_by_email
-    assert subject.respond_to? :get_by_email
-    stub_specialized :get do
-      assert_equal :EMAIL, subject.get_by_email(42).first
-    end
-    subject.stub :call, GET_LEAD_STUB do
-      lead_key = MarketoAPI::Lead.key('email', 416)
-      lead = subject.get(lead_key)
-      assert_instance_of MarketoAPI::Lead, lead
-      assert_equal 416, lead.id
-      assert_equal :get_lead, lead[:Method]
-      assert_equal lead_key, lead[:LeadKey]
-    end
-  end
-
-  def test_get_by_lead_owner_email
-    assert subject.respond_to? :get_by_lead_owner_email
-    stub_specialized :get do
-      assert_equal :LEADOWNEREMAIL,
-        subject.get_by_lead_owner_email(42).first
-    end
-    subject.stub :call, GET_LEAD_STUB do
-      lead_key = MarketoAPI::Lead.key('lead_owner_email', 416)
-      lead = subject.get(lead_key)
-      assert_instance_of MarketoAPI::Lead, lead
-      assert_equal 416, lead.id
-      assert_equal :get_lead, lead[:Method]
-      assert_equal lead_key, lead[:LeadKey]
-    end
-  end
-
-  def test_get_by_salesforce_account_id
-    assert subject.respond_to? :get_by_salesforce_account_id
-    stub_specialized :get do
-      assert_equal :SFDCACCOUNTID,
-        subject.get_by_salesforce_account_id(42).first
-    end
-    subject.stub :call, GET_LEAD_STUB do
-      lead_key = MarketoAPI::Lead.key('salesforce_account_id', 416)
-      lead = subject.get(lead_key)
-      assert_instance_of MarketoAPI::Lead, lead
-      assert_equal 416, lead.id
-      assert_equal :get_lead, lead[:Method]
-      assert_equal lead_key, lead[:LeadKey]
-    end
-  end
-
-  def test_get_by_salesforce_contact_id
-    assert subject.respond_to? :get_by_salesforce_contact_id
-    stub_specialized :get do
-      assert_equal :SFDCCONTACTID,
-        subject.get_by_salesforce_contact_id(42).first
-    end
-    subject.stub :call, GET_LEAD_STUB do
-      lead_key = MarketoAPI::Lead.key('salesforce_contact_id', 416)
-      lead = subject.get(lead_key)
-      assert_instance_of MarketoAPI::Lead, lead
-      assert_equal 416, lead.id
-      assert_equal :get_lead, lead[:Method]
-      assert_equal lead_key, lead[:LeadKey]
-    end
-  end
-
-  def test_get_by_salesforce_lead_id
-    assert subject.respond_to? :get_by_salesforce_lead_id
-    stub_specialized :get do
-      assert_equal :SFDCLEADID,
-        subject.get_by_salesforce_lead_id(42).first
-    end
-    subject.stub :call, GET_LEAD_STUB do
-      lead_key = MarketoAPI::Lead.key('salesforce_lead_id', 416)
-      lead = subject.get(lead_key)
-      assert_instance_of MarketoAPI::Lead, lead
-      assert_equal 416, lead.id
-      assert_equal :get_lead, lead[:Method]
-      assert_equal lead_key, lead[:LeadKey]
-    end
-  end
-
-  def test_get_by_salesforce_lead_owner_id
-    assert subject.respond_to? :get_by_salesforce_lead_owner_id
-    stub_specialized :get do
-      assert_equal :SFDCLEADOWNERID,
-        subject.get_by_salesforce_lead_owner_id(42).first
-    end
-    subject.stub :call, GET_LEAD_STUB do
-      lead_key = MarketoAPI::Lead.key('salesforce_lead_owner_id', 416)
-      lead = subject.get(lead_key)
-      assert_instance_of MarketoAPI::Lead, lead
-      assert_equal 416, lead.id
-      assert_equal :get_lead, lead[:Method]
-      assert_equal lead_key, lead[:LeadKey]
-    end
-  end
-
-  def test_get_by_salesforce_opportunity_id
-    assert subject.respond_to? :get_by_salesforce_opportunity_id
-    stub_specialized :get do
-      assert_equal :SFDCOPPTYID,
-        subject.get_by_salesforce_opportunity_id(42).first
-    end
-    subject.stub :call, GET_LEAD_STUB do
-      lead_key = MarketoAPI::Lead.key('salesforce_opportunity_id', 416)
-      lead = subject.get(lead_key)
-      assert_instance_of MarketoAPI::Lead, lead
-      assert_equal 416, lead.id
-      assert_equal :get_lead, lead[:Method]
-      assert_equal lead_key, lead[:LeadKey]
+        lead_key = MarketoAPI::Lead.key(key, 416)
+        lead = subject.get(key, 416)
+        assert_instance_of MarketoAPI::Lead, lead
+        assert_equal 416, lead.id
+        assert_equal :get_lead, lead[:Method]
+        assert_equal lead_key, lead[:LeadKey]
+      end
     end
   end
 
@@ -221,7 +100,7 @@ class TestMarketoAPILeads < Minitest::Test
 
         result = subject.send(:transform_param, :sync, lead)
 
-        method, params = subject.sync(lead).first
+        method, params = subject.sync(lead)
         assert_equal :sync_lead, method
         assert_equal result, params
       end
@@ -245,7 +124,7 @@ class TestMarketoAPILeads < Minitest::Test
           lead_record_list: lead_list
         }
 
-        method, params = subject.sync_multiple(leads).first
+        method, params = subject.sync_multiple(leads)
         assert_equal :sync_multiple_leads, method
         assert_equal result, params
       end

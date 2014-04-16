@@ -21,7 +21,7 @@ class MarketoAPI::Leads < MarketoAPI::ClientProxy
           when MarketoAPI::Lead
             transform_param(__method__, type_or_key)
           else
-            MarketoAPI::Lead.key(type, value)
+            MarketoAPI::Lead.key(type_or_key, value)
           end
 
     unless key

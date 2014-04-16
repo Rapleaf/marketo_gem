@@ -14,6 +14,8 @@ try_require 'minitest/emoji'
 
 module MarketoTestHelper
   ARGS_STUB = ->(*args) {
+    args = args.flatten(1)
+
     def args.to_hash
       self
     end

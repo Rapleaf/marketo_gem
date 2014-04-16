@@ -3,6 +3,7 @@ require_relative 'mobject'
 
 # MarketoAPI operations on Marketo objects (MObject).
 class MarketoAPI::MObjects < MarketoAPI::ClientProxy
+
   # :call-seq:
   #   delete(mobject, mobject, ...) -> status_list
   #
@@ -16,6 +17,9 @@ class MarketoAPI::MObjects < MarketoAPI::ClientProxy
   #
   #   marketo.mobjects.delete MarketoAPI::MObject.opportunity(75)
   def delete(*mobjects)
+    if mobjects.empty?
+      raise ArgumentError, "must provide one or more MObjects to delete"
+    end
     response = call(
       :delete_m_objects,
       m_object_list: transform_param_list(__method__, mobjects)
@@ -38,6 +42,10 @@ class MarketoAPI::MObjects < MarketoAPI::ClientProxy
   # {+describeMObject+}[http://developers.marketo.com/documentation/soap/describemobject/],
   # returning the description of the Marketo object.
   def describe(name)
+    unless MarketoAPI::MObject::DESCRIBE_TYPES.include?(name.to_sym)
+      raise ArgumentError, "invalid type #{name} to describe"
+    end
+
     extract_from_response(
       call(:describe_m_object, object_name: name),
       :metadata
@@ -54,7 +62,7 @@ class MarketoAPI::MObjects < MarketoAPI::ClientProxy
   # and association filters for #get queries.
   def get(mobject)
     call(:get_m_objects, transform_param(__method__, mobject)) { |list|
-      GetResponse.new(list)
+      Get.new(list)
     }
   end
 
@@ -62,7 +70,7 @@ class MarketoAPI::MObjects < MarketoAPI::ClientProxy
     # http://developers.marketo.com/documentation/soap/sync-mobjects/
     raise NotImplementedError,
       ":sync_m_objects is not implemented in this version."
-    response =  call(
+    response = call(
       :sync_m_objects,
       transform_param_list(__method__, mobjects)
     )
@@ -71,7 +79,7 @@ class MarketoAPI::MObjects < MarketoAPI::ClientProxy
 
   # A response object to MObjects#get that includes the return count, the
   # new stream position, and the list of MObject records.
-  class GetResponse
+  class Get
     # The number of MObjects returned from MObjects#get.
     attr_reader :return_count
     # The stream position used for paging in MObjects#get.
@@ -81,13 +89,13 @@ class MarketoAPI::MObjects < MarketoAPI::ClientProxy
     attr_reader :mobjects
 
     def initialize(hash)
-      @return_count = hash['return_count'].to_i
-      @more = hash['has_more']
-      @stream_position = hash['new_stream_position']
-      objects = MarketoAPI.array(hash['m_object_list'])
+      @return_count = hash[:return_count].to_i
+      @more = hash[:has_more]
+      @stream_position = hash[:new_stream_position]
+      objects = MarketoAPI.array(hash[:m_object_list])
 
       @mobjects = objects.map { |object|
-        MarketoAPI::MObject.from_soap_hash(object['m_object'])
+        MarketoAPI::MObject.from_soap_hash(object[:m_object])
       }
     end
 
