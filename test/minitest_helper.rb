@@ -66,4 +66,17 @@ module MarketoTestHelper
   def refute_missing_keys object, *keys
     keys.each { |key| assert object.has_key? key }
   end
+
+  def assert_raises_with_message exception_class, message, &block
+    exception_message = nil
+    assert_raises(exception_class) do
+      begin
+        block.call
+      rescue exception_class => exception
+        exception_message = exception.message
+        raise
+      end
+    end
+    assert_equal message, exception_message
+  end
 end

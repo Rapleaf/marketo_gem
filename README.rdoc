@@ -15,8 +15,10 @@ MarketoAPI (marketo-api-ruby) provides a native Ruby interface to the
 API is necessary for using marketo-api-ruby, it is an explicit goal that
 working with MarketoAPI not feel like working with a hinky Java port.
 
-This is release 0.8, targeting Marketo API version
-{2.3}[http://app.marketo.com/soap/mktows/2_3?WSDL].
+This is release 0.9, targeting Marketo API version
+{2.3}[http://app.marketo.com/soap/mktows/2_3?WSDL], fixing a +syncLead+ problem
+where +Id+, +Email+, and +ForeignSysPersonId+ are inconsistent with other
++syncLead+ parameters.
 
 === Features/Problems
 

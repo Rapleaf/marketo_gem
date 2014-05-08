@@ -103,8 +103,8 @@ class TestMarketoAPIMObject < Minitest::Test
       MarketoAPI::MObject::Criteria::CMP.each do |cmp|
         c = subject.criteria(k, 'value', cmp).last
         e = {
-          attr_name:  v,
-          attr_value: 'value',
+          attrName:   v,
+          attrValue:  'value',
           comparison: cmp
         }
 
@@ -155,9 +155,9 @@ class TestMarketoAPIMObject < Minitest::Test
     MarketoAPI::MObject::Association::TYPES.each do |k|
       c = subject.association(k, id: 3, external: 4).last
       e = {
-        m_obj_type:   k,
-        id:           3,
-        external_key: 4
+        mObjType:    k,
+        id:          3,
+        externalKey: 4
       }
 
       assert_equal e, c.to_h
@@ -189,40 +189,44 @@ class TestMarketoAPIMObject < Minitest::Test
 
   def test_params_for_get
     assert_equal({
-      type: subject.type, id: subject.id, include_details: false
+      type: subject.type, id: subject.id, includeDetails: false
     }, subject.params_for_get)
   end
 
   def test_params_for_get_minimal
     subject.id = nil
     assert_equal({
-      type: subject.type, include_details: false
+      type: subject.type, includeDetails: false
     }, subject.params_for_get)
   end
 
   def test_params_for_get_with_details
     subject.include_details = true
     assert_equal({
-      type: subject.type, id: subject.id, include_details: true
+      type: subject.type, id: subject.id, includeDetails: true
     }, subject.params_for_get)
   end
 
   def test_params_for_get_with_stream_position
     subject.stream_position = 'position'
     assert_equal({
-      type: subject.type, id: subject.id, include_details: false,
-      stream_position: 'position'
+      type:           subject.type,
+      id:             subject.id,
+      includeDetails: false,
+      streamPosition: 'position'
     }, subject.params_for_get)
   end
 
   def test_params_for_get_with_criteria
     subject.criteria(:name, 'value', :eq)
     assert_equal({
-      type: subject.type, id: subject.id, include_details: false,
-      m_obj_criteria_list: [
+      type:             subject.type,
+      id:               subject.id,
+      includeDetails:   false,
+      mObjCriteriaList: [
         {
-          attr_name:  'Name',
-          attr_value: 'value',
+          attrName:   'Name',
+          attrValue:  'value',
           comparison: :EQ
         }
       ]
@@ -232,12 +236,14 @@ class TestMarketoAPIMObject < Minitest::Test
   def test_params_for_get_with_association
     subject.association(:Lead, id: 3, external: 4)
     assert_equal({
-      type: subject.type, id: subject.id, include_details: false,
-      m_obj_association_list: [
+      type:                subject.type,
+      id:                  subject.id,
+      includeDetails:      false,
+      mObjAssociationList: [
         {
-          m_obj_type:   :Lead,
-          id:           3,
-          external_key: 4
+          mObjType:    :Lead,
+          id:          3,
+          externalKey: 4
         }
       ]
     }, subject.params_for_get)

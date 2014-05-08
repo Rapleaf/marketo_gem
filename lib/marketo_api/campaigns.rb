@@ -18,6 +18,13 @@ class MarketoAPI::Campaigns < MarketoAPI::ClientProxy
   ENUMS = MarketoAPI.freeze(*SOURCES.values) #:nodoc:
   private_constant :ENUMS
 
+  REQUEST_PARAM_XF = { #:nodoc:
+    campaign_id:   :campaignId,
+    campaign_name: :campaignName,
+    program_name:  :programName,
+  }
+  private_constant :REQUEST_PARAM_XF
+
   # Implements
   # {+getCampaignsForSource+}[http://developers.marketo.com/documentation/soap/getcampaignsforsource/].
   #
@@ -33,7 +40,7 @@ class MarketoAPI::Campaigns < MarketoAPI::ClientProxy
       {
         source:      resolve_source(source),
         name:        name,
-        exact_name:  exact_name
+        exactName:   exact_name
       }.delete_if(&MarketoAPI::MINIMIZE_HASH)
     )
   end
@@ -115,12 +122,14 @@ class MarketoAPI::Campaigns < MarketoAPI::ClientProxy
       end
     end
 
+    REQUEST_PARAM_XF.each { |o, n| options[n] = options.delete(o) }
+
     call(
-      :request_campaign,
+      :RequestCampaign,
       options.merge(
-        source:              resolve_source(source),
-        lead_list:           transform_param_list(:get, leads),
-        program_token_list:  tokens
+        source:           resolve_source(source),
+        leadList:         transform_param_list(:get, leads),
+        programTokenList: tokens
       ).delete_if(&MarketoAPI::MINIMIZE_HASH)
     )
   end
@@ -160,12 +169,12 @@ class MarketoAPI::Campaigns < MarketoAPI::ClientProxy
   #   schedule(program_name, campaign_name, options = {})
   def schedule(program_name, campaign_name, options = {})
     call(
-      :schedule_campaign,
+      :ScheduleCampaign,
       {
-        program_name: program_name,
-        campaign_name: campaign_name,
-        campaign_run_at: options[:run_at],
-        program_token_list: options[:program_tokens]
+        programName:      program_name,
+        campaignName:     campaign_name,
+        campaignRunAt:    options[:run_at],
+        programTokenList: options[:program_tokens]
       }.delete_if(&MarketoAPI::MINIMIZE_HASH)
     )
   end

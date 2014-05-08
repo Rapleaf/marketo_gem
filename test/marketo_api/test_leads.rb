@@ -16,7 +16,7 @@ class TestMarketoAPILeads < Minitest::Test
     {
       lead_record_list: {
         lead_record: {
-          id: key[:lead_key][:key_value].to_i,
+          id: key[:leadKey][:keyValue].to_i,
           lead_attribute_list: {
             attribute: [
               { attr_name: 'Email', attr_value: nil, attr_type: 'string' },
@@ -30,7 +30,7 @@ class TestMarketoAPILeads < Minitest::Test
   }
 
   def test_get_valid_lead_key
-    lead_key = { lead_key: { key_type: 'id', key_value: 416 } }
+    lead_key = { leadKey: { keyType: 'id', keyValue: 416 } }
     subject.stub :call, GET_LEAD_STUB do
       lead = subject.get(lead_key)
       assert_instance_of MarketoAPI::Lead, lead
@@ -120,8 +120,8 @@ class TestMarketoAPILeads < Minitest::Test
         }
         lead_list = subject.send(:transform_param_list, :sync, leads)
         result = {
-          dedup_enabled: true,
-          lead_record_list: lead_list
+          dedupEnabled:   true,
+          leadRecordList: lead_list
         }
 
         method, params = subject.sync_multiple(leads)

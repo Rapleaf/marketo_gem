@@ -14,10 +14,10 @@ class TestMarketoAPILists < Minitest::Test
     end
     stub_soap_call do
       result = {
-        list_operation:   :ADDTOLIST,
-        list_key:         :list_key,
-        strict:           false,
-        list_member_list: [ lead_key(416) ]
+        listOperation:  :ADDTOLIST,
+        listKey:        :list_key,
+        strict:         false,
+        listMemberList: [ lead_key(416) ]
       }
 
       method, options = subject.add(:list_key, lead: lead_key(416))
@@ -33,10 +33,10 @@ class TestMarketoAPILists < Minitest::Test
   def test_add_merged_leads
     stub_soap_call do
       result = {
-        list_operation:   :ADDTOLIST,
-        list_key:         :list_key,
-        strict:           false,
-        list_member_list: [ lead_key(905), lead_key(416) ]
+        listOperation:  :ADDTOLIST,
+        listKey:        :list_key,
+        strict:         false,
+        listMemberList: [ lead_key(905), lead_key(416) ]
       }
 
       method, options = subject.add(:list_key, leads: lead_key(905),
@@ -52,10 +52,10 @@ class TestMarketoAPILists < Minitest::Test
     end
     stub_soap_call do
       result = {
-        list_operation:   :REMOVEFROMLIST,
-        list_key:         :list_key,
-        strict:           false,
-        list_member_list: [ lead_key(416) ]
+        listOperation:  :REMOVEFROMLIST,
+        listKey:        :list_key,
+        strict:         false,
+        listMemberList: [ lead_key(416) ]
       }
 
       method, options = subject.remove(:list_key, lead: lead_key(416))
@@ -70,10 +70,10 @@ class TestMarketoAPILists < Minitest::Test
     end
     stub_soap_call do
       result = {
-        list_operation:   :ISMEMBEROFLIST,
-        list_key:         :list_key,
-        strict:           false,
-        list_member_list: [ lead_key(416) ]
+        listOperation:  :ISMEMBEROFLIST,
+        listKey:        :list_key,
+        strict:         false,
+        listMemberList: [ lead_key(416) ]
       }
 
       method, options = subject.member?(:list_key, lead: lead_key(416))
@@ -84,7 +84,7 @@ class TestMarketoAPILists < Minitest::Test
 
   def test_class_key
     subject.class::NAMED_TYPES.each { |k, v|
-      result = { list_key: { key_type: v, key_value: 'value' } }
+      result = { listKey: { keyType: v, keyValue: 'value' } }
 
       assert_equal result, subject.class.key(k, 'value')
       assert_equal result, subject.class.key(v, 'value')

@@ -192,19 +192,19 @@ class MarketoAPI::Lead
   # Returns the parameters required for use with MarketoAPI::Leads#sync.
   def params_for_sync
     {
-      return_lead: true,
-      marketo_cookie: cookie,
-      lead_record: {
-        email:                  email,
-        id:                     id,
-        foreign_sys_person_id:  foreign[:id],
-        foreign_sys_type:       foreign[:type],
-        lead_attribute_list: {
+      returnLead:    true,
+      marketoCookie: cookie,
+      leadRecord:    {
+        Email:              email,
+        Id:                 id,
+        ForeignSysPersonId: foreign[:id],
+        ForeignSysType:     foreign[:type],
+        leadAttributeList:  {
           attribute: attributes.map { |key, value|
             {
-              attr_name:   key.to_s,
-              attr_type:   types[key],
-              attr_value:  value
+              attrName:  key.to_s,
+              attrType:  types[key],
+              attrValue: value
             }
           }
         }
@@ -234,9 +234,9 @@ class MarketoAPI::Lead
     # API calls.
     def key(key, value)
       {
-        lead_key: {
-          key_type:   key_type(key),
-          key_value:  value
+        leadKey: {
+          keyType:  key_type(key),
+          keyValue: value
         }
       }
     end

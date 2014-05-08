@@ -111,16 +111,16 @@ class TestMarketoAPILead < Minitest::Test
 
   def test_params_for_sync
     result = {
-      return_lead: true,
-      lead_record: {
-        email: @email,
-        id: @id,
-        lead_attribute_list: {
+      returnLead: true,
+      leadRecord: {
+        Email: @email,
+        Id: @id,
+        leadAttributeList: {
           attribute: [
-            { attr_name: 'Email', attr_type: 'string', attr_value: @email },
-            { attr_name: 'String', attr_type: 'string', attr_value: 'string' },
-            { attr_name: 'Int', attr_type: 'integer', attr_value: 5 },
-            { attr_name: 'Date', attr_type: 'datetime', attr_value: @date }
+            { attrName: 'Email', attrType: 'string', attrValue: @email },
+            { attrName: 'String', attrType: 'string', attrValue: 'string' },
+            { attrName: 'Int', attrType: 'integer', attrValue: 5 },
+            { attrName: 'Date', attrType: 'datetime', attrValue: @date }
           ]
         }
       }
@@ -131,7 +131,7 @@ class TestMarketoAPILead < Minitest::Test
 
   def test_class_key
     subject.class::NAMED_KEYS.each { |k, v|
-      result = { lead_key: { key_type: v, key_value: 'value' } }
+      result = { leadKey: { keyType: v, keyValue: 'value' } }
 
       assert_equal result, subject.class.key(k, 'value')
       assert_equal result, subject.class.key(v, 'value')

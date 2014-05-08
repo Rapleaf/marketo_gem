@@ -22,7 +22,7 @@ class MarketoAPI::MObjects < MarketoAPI::ClientProxy
     end
     response = call(
       :delete_m_objects,
-      m_object_list: transform_param_list(__method__, mobjects)
+      mObjectList: transform_param_list(__method__, mobjects)
     )
     extract_mobject_status_list(response)
   end
@@ -47,7 +47,7 @@ class MarketoAPI::MObjects < MarketoAPI::ClientProxy
     end
 
     extract_from_response(
-      call(:describe_m_object, object_name: name),
+      call(:describe_m_object, objectName: name),
       :metadata
     )
   end
@@ -69,7 +69,7 @@ class MarketoAPI::MObjects < MarketoAPI::ClientProxy
   def sync(operation, *mobjects) #:nodoc:
     # http://developers.marketo.com/documentation/soap/sync-mobjects/
     raise NotImplementedError,
-      ":sync_m_objects is not implemented in this version."
+      ":syncMObjects is not implemented in this version."
     response = call(
       :sync_m_objects,
       transform_param_list(__method__, mobjects)

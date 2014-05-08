@@ -5,17 +5,18 @@ require 'openssl'
 # The client to the Marketo SOAP API.
 class MarketoAPI::Client
   DEFAULT_CONFIG = {
-    api_subdomain:     '123-ABC-456',
-    api_version:       '2_3',
-    user_id:           nil,
-    encryption_key:    nil,
-    read_timeout:      90,
-    open_timeout:      90,
-    headers:           { 'Connection' => 'Keep-Alive' },
-    env_namespace:     'SOAP-ENV',
-    namespaces:        { 'xmlns:ns1' => 'http://www.marketo.com/mktows/' },
-    pretty_print_xml:  true,
-    ssl_verify_mode:   :none,
+    api_subdomain:           '123-ABC-456',
+    api_version:             '2_3',
+    user_id:                 nil,
+    encryption_key:          nil,
+    read_timeout:            90,
+    open_timeout:            90,
+    headers:                 { 'Connection' => 'Keep-Alive' },
+    env_namespace:           'SOAP-ENV',
+    namespaces:              { 'xmlns:ns1' => 'http://www.marketo.com/mktows/' },
+    pretty_print_xml:        true,
+    ssl_verify_mode:         :none,
+    convert_request_keys_to: :none,
   }.freeze
   DEFAULT_CONFIG.values.each(&:freeze)
   private_constant :DEFAULT_CONFIG

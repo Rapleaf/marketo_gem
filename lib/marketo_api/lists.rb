@@ -71,9 +71,9 @@ class MarketoAPI::Lists < MarketoAPI::ClientProxy
   class << self
     def key(type, value)
       {
-        list_key: {
-          key_type: key_type(type),
-          key_value: value
+        listKey: {
+          keyType:  key_type(type),
+          keyValue: value
         }
       }
     end
@@ -100,10 +100,10 @@ class MarketoAPI::Lists < MarketoAPI::ClientProxy
 
     call(
       :list_operation,
-      list_operation:    operation,
-      list_key:          list_key,
-      strict:            false,
-      list_member_list:  transform_param_list(:get, leads)
+      listOperation:  operation,
+      listKey:        list_key,
+      strict:         false,
+      listMemberList: transform_param_list(:get, leads)
     )
   end
 end

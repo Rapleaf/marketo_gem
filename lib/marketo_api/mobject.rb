@@ -121,12 +121,13 @@ class MarketoAPI::MObject
   def params_for_get #:nodoc:
     ensure_valid_type!(type, GET_TYPES)
     {
-      type:                    type,
-      id:                      id,
-      include_details:         include_details,
-      m_obj_criteria_list:     criteria.compact.uniq.map(&:to_h),
-      m_obj_association_list:  associations.compact.uniq.map(&:to_h),
-      stream_position:         stream_position
+      type:                type,
+      id:                  id,
+      includeDetails:      include_details,
+      mObjCriteriaList:    criteria.compact.uniq.map(&:to_h),
+      mObjAssociationList: associations.compact.uniq.map(&:to_h),
+      streamPosition:      stream_position,
+      externalKey:         nil
     }.delete_if(&MarketoAPI::MINIMIZE_HASH)
   end
 
@@ -214,9 +215,9 @@ class MarketoAPI::MObject
 
     def to_h
       {
-        attr_name:   name,
-        attr_value:  value,
-        comparison:  comparison
+        attrName:   name,
+        attrValue:  value,
+        comparison: comparison
       }
     end
   end
@@ -255,9 +256,9 @@ class MarketoAPI::MObject
 
     def to_h
       {
-        m_obj_type:    type,
-        id:            id,
-        external_key:  external_key,
+        mObjType:    type,
+        id:          id,
+        externalKey: external_key,
       }
     end
   end
