@@ -20,6 +20,9 @@ This is release 0.9, targeting Marketo API version
 where +Id+, +Email+, and +ForeignSysPersonId+ are inconsistent with other
 +syncLead+ parameters.
 
+Please note that Ruby 1.9.2 is not officially supported, but MarketoAPI will
+install on any version of Ruby 1.9.2 or later.
+
 === Features/Problems
 
 The marketo-api-ruby implementation of the Marketo SOAP API is incomplete, but

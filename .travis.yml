@@ -4,16 +4,14 @@ rvm:
   - 2.1.0
   - 2.0.0
   - 1.9.3
-  - 1.9.2
   - ruby-head
   - jruby-19mode
   - jruby-head
-  - rbx
+  - rbx-2
 matrix:
   allow_failures:
     - rvm:
-      - rbx
-      - 1.9.2
+      - rbx-2
 gemfile:
   - Gemfile
 before_script:
@@ -21,7 +19,6 @@ before_script:
     case "${TRAVIS_RUBY_VERSION}" in
       rbx*)
         gem install psych
-        gem install -v '~> 2.0' rubysl
         ;;
     esac
   - rake travis:before -t

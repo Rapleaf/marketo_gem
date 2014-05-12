@@ -1,23 +1,23 @@
 # -*- encoding: utf-8 -*-
-# stub: marketo-api-ruby 0.8 ruby lib
+# stub: marketo-api-ruby 0.9 ruby lib
 
 Gem::Specification.new do |s|
   s.name = "marketo-api-ruby"
-  s.version = "0.8"
+  s.version = "0.9"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
   s.authors = ["Austin Ziegler"]
-  s.date = "2014-04-16"
-  s.description = "MarketoAPI (marketo-api-ruby) provides a native Ruby interface to the\n{Marketo SOAP API}[http://developers.marketo.com/documentation/soap/], using\n{savon}[https://github.com/savonrb/savon]. While understanding the Marketo SOAP\nAPI is necessary for using marketo-api-ruby, it is an explicit goal that\nworking with MarketoAPI not feel like working with a hinky Java port.\n\nThis is release 0.8, targeting Marketo API version\n{2.3}[http://app.marketo.com/soap/mktows/2_3?WSDL]."
+  s.date = "2014-05-12"
+  s.description = "MarketoAPI (marketo-api-ruby) provides a native Ruby interface to the\n{Marketo SOAP API}[http://developers.marketo.com/documentation/soap/], using\n{savon}[https://github.com/savonrb/savon]. While understanding the Marketo SOAP\nAPI is necessary for using marketo-api-ruby, it is an explicit goal that\nworking with MarketoAPI not feel like working with a hinky Java port.\n\nThis is release 0.9, targeting Marketo API version\n{2.3}[http://app.marketo.com/soap/mktows/2_3?WSDL], fixing a +syncLead+ problem\nwhere +Id+, +Email+, and +ForeignSysPersonId+ are inconsistent with other\n+syncLead+ parameters.\n\nPlease note that Ruby 1.9.2 is not officially supported, but MarketoAPI will\ninstall on any version of Ruby 1.9.2 or later."
   s.email = ["halostatue@gmail.com"]
   s.extra_rdoc_files = ["Contributing.rdoc", "History.rdoc", "Licence.rdoc", "Manifest.txt", "README.rdoc", "Contributing.rdoc", "History.rdoc", "Licence.rdoc", "README.rdoc"]
-  s.files = [".gemtest", "Contributing.rdoc", "Gemfile", "History.rdoc", "Licence.rdoc", "Manifest.txt", "README.rdoc", "Rakefile", "lib/marketo-api-ruby.rb", "lib/marketo_api.rb", "lib/marketo_api/campaigns.rb", "lib/marketo_api/client.rb", "lib/marketo_api/client_proxy.rb", "lib/marketo_api/lead.rb", "lib/marketo_api/leads.rb", "lib/marketo_api/lists.rb", "lib/marketo_api/mobject.rb", "lib/marketo_api/mobjects.rb", "spec/marketo/authentication_header_spec.rb", "spec/marketo/client_spec.rb", "spec/marketo/lead_key_spec.rb", "spec/marketo/lead_record_spec.rb", "spec/spec_helper.rb", "test/marketo_api/test_campaigns.rb", "test/marketo_api/test_client.rb", "test/marketo_api/test_lead.rb", "test/marketo_api/test_leads.rb", "test/marketo_api/test_lists.rb", "test/marketo_api/test_mobject.rb", "test/marketo_api/test_mobjects.rb", "test/minitest_helper.rb", "test/test_marketo_api.rb"]
-  s.homepage = "https://github.com/halostatue/marketo-api-ruby"
+  s.files = [".coveralls.yml", ".gemtest", ".hoerc", ".travis.yml", "Contributing.rdoc", "Gemfile", "History.rdoc", "Licence.rdoc", "Manifest.txt", "README.rdoc", "Rakefile", "lib/marketo-api-ruby.rb", "lib/marketo_api.rb", "lib/marketo_api/campaigns.rb", "lib/marketo_api/client.rb", "lib/marketo_api/client_proxy.rb", "lib/marketo_api/lead.rb", "lib/marketo_api/leads.rb", "lib/marketo_api/lists.rb", "lib/marketo_api/mobject.rb", "lib/marketo_api/mobjects.rb", "test/marketo_api/test_campaigns.rb", "test/marketo_api/test_client.rb", "test/marketo_api/test_lead.rb", "test/marketo_api/test_leads.rb", "test/marketo_api/test_lists.rb", "test/marketo_api/test_mobject.rb", "test/marketo_api/test_mobjects.rb", "test/minitest_helper.rb", "test/test_marketo_api.rb"]
+  s.homepage = "https://github.com/ClearFit/marketo-api-ruby"
   s.licenses = ["MIT"]
   s.rdoc_options = ["--main", "README.rdoc"]
   s.required_ruby_version = Gem::Requirement.new(">= 1.9.2")
-  s.rubygems_version = "2.2.1"
+  s.rubygems_version = "2.2.2"
   s.summary = "MarketoAPI (marketo-api-ruby) provides a native Ruby interface to the {Marketo SOAP API}[http://developers.marketo.com/documentation/soap/], using {savon}[https://github.com/savonrb/savon]"
   s.test_files = ["test/marketo_api/test_campaigns.rb", "test/marketo_api/test_client.rb", "test/marketo_api/test_lead.rb", "test/marketo_api/test_leads.rb", "test/marketo_api/test_lists.rb", "test/marketo_api/test_mobject.rb", "test/marketo_api/test_mobjects.rb", "test/test_marketo_api.rb"]
 

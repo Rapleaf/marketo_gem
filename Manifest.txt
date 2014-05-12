@@ -1,4 +1,7 @@
+.coveralls.yml
 .gemtest
+.hoerc
+.travis.yml
 Contributing.rdoc
 Gemfile
 History.rdoc
@@ -16,11 +19,6 @@ lib/marketo_api/leads.rb
 lib/marketo_api/lists.rb
 lib/marketo_api/mobject.rb
 lib/marketo_api/mobjects.rb
-spec/marketo/authentication_header_spec.rb
-spec/marketo/client_spec.rb
-spec/marketo/lead_key_spec.rb
-spec/marketo/lead_record_spec.rb
-spec/spec_helper.rb
 test/marketo_api/test_campaigns.rb
 test/marketo_api/test_client.rb
 test/marketo_api/test_lead.rb
