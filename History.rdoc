@@ -1,3 +1,14 @@
+=== 0.9 / 2014-MM-DD
+
+* Bug Fixes:
+  * Fix #15, where Marketo uses inconsistent camelcasing.
+
+* Infrastructure:
+  * While marketo-api-ruby may work on 1.9.2, it's being removed from Travis
+    due to ongoing test failures that I can't replicate (I can't get a 1.9.2
+    Ruby built, and it's no longer a supported Ruby in any case).
+  * Fixed rbx tests.
+
 === 0.8 / 2014-04-08
 
 * First release as marketo-api-ruby. Features a substantially restructured API.

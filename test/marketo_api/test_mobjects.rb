@@ -32,13 +32,13 @@ class TestMarketoAPIMObjects < Minitest::Test
         source = MarketoAPI::MObject.opportunity(3)
         method, params = subject.delete(source)
         assert_equal :delete_m_objects, method
-        assert_equal({ m_object_list: [ source.params_for_delete ] }, params)
+        assert_equal({ mObjectList: [ source.params_for_delete ] }, params)
       end
     end
 
     extractor = ->(*args) {
       {
-        m_obj_status_list: args.last[:m_object_list].map { |mobject|
+        m_obj_status_list: args.last[:mObjectList].map { |mobject|
           {
             m_object_status: { id: mobject[:id], status: 'DELETED' }
           }
@@ -81,7 +81,7 @@ class TestMarketoAPIMObjects < Minitest::Test
       stub_soap_call do
         method, params = subject.describe('Opportunity')
         assert_equal :describe_m_object, method
-        assert_equal({ object_name: 'Opportunity' }, params)
+        assert_equal({ objectName: 'Opportunity' }, params)
       end
     end
 
@@ -104,7 +104,7 @@ class TestMarketoAPIMObjects < Minitest::Test
       stub_soap_call do
         method, params = subject.get(MarketoAPI::MObject.opportunity)
         assert_equal :get_m_objects, method
-        assert_equal({ type: :Opportunity, include_details: false }, params)
+        assert_equal({ type: :Opportunity, includeDetails: false }, params)
       end
     end
   end

@@ -13,8 +13,8 @@ class MarketoAPI::Leads < MarketoAPI::ClientProxy
   def get(type_or_key, value = nil)
     key = case type_or_key
           when Hash
-            if lk = type_or_key[:lead_key]
-              if MarketoAPI::Lead.send(:key_type, lk[:key_type])
+            if lk = type_or_key[:leadKey]
+              if MarketoAPI::Lead.send(:key_type, lk[:keyType])
                 type_or_key
               end
             end
@@ -25,7 +25,7 @@ class MarketoAPI::Leads < MarketoAPI::ClientProxy
           end
 
     unless key
-      raise ArgumentError, ':type_or_key is not a valid lead key'
+      raise ArgumentError, "#{type_or_key} is not a valid lead key"
     end
     extract_from_response(call(:get_lead, key), :lead_record_list) { |record|
       MarketoAPI::Lead.from_soap_hash(record[:lead_record]) do |lead|
@@ -64,8 +64,8 @@ class MarketoAPI::Leads < MarketoAPI::ClientProxy
   def sync_multiple(leads, options = { dedup_enabled: true })
     response = call(
       :sync_multiple_leads,
-      dedup_enabled: options[:dedup_enabled],
-      lead_record_list: transform_param_list(:sync, leads)
+      dedupEnabled:   options[:dedup_enabled],
+      leadRecordList: transform_param_list(:sync, leads)
     )
     extract_from_response(response, :lead_record_list) do |list|
       list.each do |record|
