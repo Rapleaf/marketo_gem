@@ -125,7 +125,7 @@ class MarketoAPI::Campaigns < MarketoAPI::ClientProxy
     REQUEST_PARAM_XF.each { |o, n| options[n] = options.delete(o) }
 
     call(
-      :RequestCampaign,
+      :request_campaign,
       options.merge(
         source:           resolve_source(source),
         leadList:         transform_param_list(:get, leads),
@@ -169,7 +169,7 @@ class MarketoAPI::Campaigns < MarketoAPI::ClientProxy
   #   schedule(program_name, campaign_name, options = {})
   def schedule(program_name, campaign_name, options = {})
     call(
-      :ScheduleCampaign,
+      :schedule_campaign,
       {
         programName:      program_name,
         campaignName:     campaign_name,

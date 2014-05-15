@@ -107,7 +107,7 @@ class TestMarketoAPICampaigns < Minitest::Test
       method, options = subject.request(lead:        lead_key(3),
                                         leads:       lead_keys(4, 5),
                                         campaign_id: 3)
-      assert_equal :RequestCampaign, method
+      assert_equal :request_campaign, method
       refute_missing_keys options, :source, :leadList, :campaignId
       assert_equal :MKTOWS, options[:source]
       assert_equal lead_keys(4, 5, 3), options[:leadList]
@@ -121,7 +121,7 @@ class TestMarketoAPICampaigns < Minitest::Test
     stub_soap_call do
       method, options = subject.request(lead:          lead_key(3),
                                         campaign_name: 'earthday')
-      assert_equal :RequestCampaign, method
+      assert_equal :request_campaign, method
       assert_equal :MKTOWS, options[:source]
       assert_equal [ lead_key(3) ], options[:leadList]
       assert_equal 'earthday', options[:campaignName]
@@ -134,7 +134,7 @@ class TestMarketoAPICampaigns < Minitest::Test
     stub_soap_call do
       method, options = subject.request(lead:         lead_key(3),
                                         program_name: 'earthday')
-      assert_equal :RequestCampaign, method
+      assert_equal :request_campaign, method
       refute_missing_keys options, :source, :leadList, :programName
       assert_equal :MKTOWS, options[:source]
       assert_equal [ lead_key(3) ], options[:leadList]
@@ -147,7 +147,7 @@ class TestMarketoAPICampaigns < Minitest::Test
   def test_schedule
     stub_soap_call do
       method, options = subject.schedule('program', 'campaign')
-      assert_equal :ScheduleCampaign, method
+      assert_equal :schedule_campaign, method
       assert_equal({ programName: 'program', campaignName: 'campaign' }, options)
     end
   end
@@ -155,7 +155,7 @@ class TestMarketoAPICampaigns < Minitest::Test
   def test_schedule_with_run_at
     stub_soap_call do
       method, options = subject.schedule('program', 'campaign', run_at: 3)
-      assert_equal :ScheduleCampaign, method
+      assert_equal :schedule_campaign, method
       assert_equal({
         programName:   'program',
         campaignName:  'campaign',
@@ -167,7 +167,7 @@ class TestMarketoAPICampaigns < Minitest::Test
   def test_schedule_with_program_tokens
     stub_soap_call do
       method, options = subject.schedule('program', 'campaign', program_tokens: [ :x ])
-      assert_equal :ScheduleCampaign, method
+      assert_equal :schedule_campaign, method
       assert_equal({
         programName:      'program',
         campaignName:     'campaign',

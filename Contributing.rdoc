@@ -63,3 +63,4 @@ Here's the most direct way to get your work merged into the project:
 * James O'Brien (@jeob32) created
   {marketo_gem}[https://github.com/Rapleaf/marketo_gem] for Rapleaf.
 * Eddie Siegel (@eddiesiegel)
+* Sina Jahan (@sinajahan)
