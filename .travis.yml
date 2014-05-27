@@ -10,8 +10,7 @@ rvm:
   - rbx-2
 matrix:
   allow_failures:
-    - rvm:
-      - rbx-2
+    - rvm: rbx-2
 gemfile:
   - Gemfile
 before_script:
@@ -26,8 +25,13 @@ script: rake travis
 after_script:
   - rake travis:after -t
 notifications:
-  recipients:
-    - devs@clearfit.com
   email:
-    - on_success: change
-    - on_failure: always
+    recipients:
+      - devs@clearfit.com
+    on_success: change
+    on_failure: always
+env:
+  global:
+  - secure: EeWqQpeDNLg34HzfMtGxL327DODTQ1jTwcTpzJ7ZBX/ZUeXyAHVgeDPudg1YU4lDohE
+  - secure: ljohOhWJ0Yx9oL4EWd/22EX//Rn7dCiFpYNKDqeyuPNEc28UuXHZKuRNgMx1QUVGzBe
+  - secure: V04rbN1i+o3vd35pj89DO/odzBcix6dKiNyIxDWkiLK41M5cyCrZpEibyiEI0qintRq
