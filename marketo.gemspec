@@ -14,7 +14,7 @@ Gem::Specification.new do |gem|
   gem.files        = Dir['lib/**/*.rb']
   gem.require_path = ['lib']
   gem.test_files   = Dir['spec/**/*_spec.rb']
-  gem.version      = "1.4.2"
+  gem.version      = "1.4.3"
   gem.has_rdoc     = true
   gem.rdoc_options << '--title' << 'Marketo Client Gem' << '--main' << 'Rapleaf::Marketo::Client'
 
