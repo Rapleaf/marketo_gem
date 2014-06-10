@@ -1,5 +1,6 @@
 *.swp
 *~
+.bundle/
 .rake_tasks~
 .source_index
 .vagrant

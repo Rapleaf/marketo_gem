@@ -12,7 +12,37 @@ gem 'minitest'
 require 'minitest/autorun'
 try_require 'minitest/emoji'
 
+module HashKeyAssertions
+  def assert_missing_keys object, *keys
+    keys.each { |key| refute object.has_key? key }
+  end
+
+  def refute_missing_keys object, *keys
+    keys.each { |key| assert object.has_key? key }
+  end
+end
+
+module ExceptionMessageAssertions
+  def assert_raises_with_message exception_class, message, &block
+    exception_message = nil
+    assert_raises(exception_class) do
+      begin
+        block.call
+      rescue exception_class => exception
+        exception_message = exception.message
+        raise
+      end
+    end
+    assert_equal message, exception_message
+  end
+end
+
 module MarketoTestHelper
+  def self.included(mod)
+    mod.send(:include, HashKeyAssertions)
+    mod.send(:include, ExceptionMessageAssertions)
+  end
+
   ARGS_STUB = ->(*args) {
     args = args.flatten(1)
 
@@ -58,25 +88,20 @@ module MarketoTestHelper
     end
   end
   alias_method :lead_keys, :lead_key
+end
 
-  def assert_missing_keys object, *keys
-    keys.each { |key| refute object.has_key? key }
+module MarketoIntegrationHelper
+  def self.included(mod)
+    mod.send(:include, HashKeyAssertions)
+    mod.send(:include, ExceptionMessageAssertions)
   end
 
-  def refute_missing_keys object, *keys
-    keys.each { |key| assert object.has_key? key }
-  end
+  attr_reader :client
 
-  def assert_raises_with_message exception_class, message, &block
-    exception_message = nil
-    assert_raises(exception_class) do
-      begin
-        block.call
-      rescue exception_class => exception
-        exception_message = exception.message
-        raise
-      end
-    end
-    assert_equal message, exception_message
+  def setup
+    super
+    @client  = MarketoAPI.client(api_subdomain:  ENV['MARKETO_SUBDOMAIN'],
+                                 user_id:        ENV['MARKETO_USER_ID'],
+                                 encryption_key: ENV['MARKETO_ENCRYPTION_KEY'])
   end
 end
