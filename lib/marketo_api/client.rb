@@ -1,5 +1,10 @@
-require 'savon'
-require 'openssl'
+begin
+  verbose, $VERBOSE = $VERBOSE, nil
+  require 'savon'
+  require 'openssl'
+ensure
+  $VERBOSE = verbose
+end
 
 ##
 # The client to the Marketo SOAP API.
