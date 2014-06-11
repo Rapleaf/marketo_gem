@@ -3,13 +3,24 @@ require_relative 'lead'
 
 # Implements Lead operations for Marketo.
 class MarketoAPI::Leads < MarketoAPI::ClientProxy
+  # Creates a new lead with a proxy to this Leads instance.
+  #
+  # :call-seq:
+  #   new -> Lead
+  #   new { |lead| ... } -> Lead
+  #   new(options) -> Lead
+  #   new(options) { |lead| ... } -> Lead
+  def new(options = {}, &block)
+    MarketoAPI::Lead.new(options.merge(proxy: self), &block)
+  end
+
   # Implements
   # {+getLead+}[http://developers.marketo.com/documentation/soap/getlead/],
   # returning a MarketoAPI::Lead object.
   #
   # :call-seq:
-  #   get(lead_key)
-  #   get(key_type, key_value)
+  #   get(lead_key) -> Lead
+  #   get(key_type, key_value) -> Lead
   def get(type_or_key, value = nil)
     key = case type_or_key
           when Hash
@@ -37,6 +48,9 @@ class MarketoAPI::Leads < MarketoAPI::ClientProxy
   # Implements
   # {+syncLead+}[http://developers.marketo.com/documentation/soap/synclead/],
   # returning a MarketoAPI::Lead object.
+  #
+  # :call-seq:
+  #   sync(Lead) -> Lead
   def sync(lead_record)
     extract_from_response(
       call(:sync_lead, transform_param(__method__, lead_record)),
@@ -59,8 +73,8 @@ class MarketoAPI::Leads < MarketoAPI::ClientProxy
   # false</tt>.
   #
   # :call-seq:
-  #   sync_multiple(leads)
-  #   sync_multiple(leads, dedup_enabled: false)
+  #   sync_multiple(leads) -> array of Lead
+  #   sync_multiple(leads, dedup_enabled: false) -> array of Lead
   def sync_multiple(leads, options = { dedup_enabled: true })
     response = call(
       :sync_multiple_leads,
@@ -96,43 +110,50 @@ class MarketoAPI::Leads < MarketoAPI::ClientProxy
 
   ##
   # :method: get_by_cookie
-  # :call-seq: get_by_cookie(cookie)
+  # :call-seq:
+  #   get_by_cookie(cookie) -> Lead
   #
   # Gets the Lead by the provided Marketo Munchkin cookie.
 
   ##
   # :method: get_by_email
-  # :call-seq: get_by_email(email)
+  # :call-seq:
+  #   get_by_email(email) -> Lead
   #
   # Gets the Lead by the provided lead email.
 
   ##
   # :method: get_by_lead_owner_email
-  # :call-seq: get_by_lead_owner_email(lead_owner_email)
+  # :call-seq:
+  #   get_by_lead_owner_email(lead_owner_email) -> Lead
   #
   # Gets the Lead by the provided Lead Owner email.
 
   ##
   # :method: get_by_salesforce_account_id
-  # :call-seq: get_by_salesforce_account_id(salesforce_account_id)
+  # :call-seq:
+  #   get_by_salesforce_account_id(salesforce_account_id) -> Lead
   #
   # Gets the Lead by the provided SFDC Account ID.
 
   ##
   # :method: get_by_salesforce_contact_id
-  # :call-seq: get_by_salesforce_contact_id(salesforce_contact_id)
+  # :call-seq:
+  #   get_by_salesforce_contact_id(salesforce_contact_id) -> Lead
   #
   # Gets the Lead by the provided SFDC Contact ID.
 
   ##
   # :method: get_by_salesforce_lead_id
-  # :call-seq: get_by_salesforce_lead_id(salesforce_lead_id)
+  # :call-seq:
+  #   get_by_salesforce_lead_id(salesforce_lead_id) -> Lead
   #
   # Gets the Lead by the provided SFDC Lead ID.
 
   ##
   # :method: get_by_salesforce_lead_owner_id
-  # :call-seq: get_by_salesforce_lead_owner_id(salesforce_lead_owner_id)
+  # :call-seq:
+  #   get_by_salesforce_lead_owner_id(salesforce_lead_owner_id) -> Lead
   #
   # Gets the Lead by the provided SFDC Lead Owner ID.
 

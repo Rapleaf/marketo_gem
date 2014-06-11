@@ -92,6 +92,7 @@ end
 
 module MarketoIntegrationHelper
   def self.included(mod)
+    puts "#{mod.name} will be run."
     mod.send(:include, HashKeyAssertions)
     mod.send(:include, ExceptionMessageAssertions)
   end
@@ -103,5 +104,10 @@ module MarketoIntegrationHelper
     @client  = MarketoAPI.client(api_subdomain:  ENV['MARKETO_SUBDOMAIN'],
                                  user_id:        ENV['MARKETO_USER_ID'],
                                  encryption_key: ENV['MARKETO_ENCRYPTION_KEY'])
+    @verbose, $VERBOSE = $VERBOSE, nil
+  end
+
+  def teardown
+    $VERBOSE = @verbose
   end
 end

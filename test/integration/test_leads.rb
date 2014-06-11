@@ -1,6 +1,13 @@
+# -*- ruby encoding: utf-8 -*-
+
 if ENV['MARKETO_USER_ID']
   require "minitest_helper"
-  require 'debugger'
+  begin
+    verbose, $VERBOSE = $VERBOSE, nil
+    require 'debugger'
+  ensure
+    $VERBOSE = verbose
+  end
 
   $run_id = Time.now.strftime('%Y%j-%H%M%S')
 
@@ -40,6 +47,15 @@ if ENV['MARKETO_USER_ID']
           }
         }
         assert_equal expected, subject.error.to_hash
+      end
+
+      def test_02_create_lead
+        lead = subject.new(email: @email) do |l|
+          l[:FirstName] = 'George'
+          l[:LastName]  = 'of the Jungle'
+        end
+        refute_nil lead.sync!
+        refute_nil lead.id
       end
     end
   end
