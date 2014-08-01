@@ -6,7 +6,7 @@
 #
 #   require 'marketo_api'
 module MarketoAPI
-  VERSION = "0.9.1"
+  VERSION = "0.9.2"
 
   MINIMIZE_HASH = ->(k, v) { #:nodoc:
     v.nil? or (v.respond_to?(:empty?) and v.empty?)

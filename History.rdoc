@@ -1,3 +1,10 @@
+=== 0.9.2 / 2014-08-01
+
+* Infrastructure:
+  * Improved documentation.
+  * Added Guard.
+  * Added integration tests for the ClearFit repository.
+
 === 0.9.1 / 2014-05-15
 
 * Bug Fixes:
