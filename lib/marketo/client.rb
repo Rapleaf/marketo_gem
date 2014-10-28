@@ -1,5 +1,3 @@
-require File.expand_path('authentication_header', File.dirname(__FILE__))
-
 module Marketo
   def self.new_client(access_key, secret_key, api_subdomain = 'na-i', api_version = '1_5', document_version = '1_4')
     client = Savon::Client.new do
