@@ -4,13 +4,14 @@ module Rapleaf
   module Marketo
 
     describe Client do
-      EMAIL   = "some@email.com"
-      IDNUM   = 29
-      FIRST   = 'Joe'
-      LAST    = 'Smith'
-      COMPANY = 'Rapleaf'
-      MOBILE  = '415 123 456'
-      API_KEY = 'API123KEY'
+
+      let(:email) { "some@email.com" }
+      let(:idnum) { 29 }
+      let(:first) { 'Joe' }
+      let(:last) { 'Smith' }
+      let(:company) { 'Rapleaf' }
+      let(:mobile) { '415 123 456' }
+      let(:api_key) { 'API123KEY' }
 
       context 'Client interaction' do
         it "should have the correct body format on get_lead_by_idnum" do
@@ -23,7 +24,7 @@ module Rapleaf
                       :count            => 1,
                       :lead_record_list => {
                           :lead_record => {
-                              :email                 => EMAIL,
+                              :email                 => email,
                               :lead_attribute_list   => {
                                   :attribute => [
                                       {:attr_name => 'name1', :attr_type => 'string', :attr_value => 'val1'},
@@ -34,7 +35,7 @@ module Rapleaf
                               },
                               :foreign_sys_type      => nil,
                               :foreign_sys_person_id => nil,
-                              :id                    => IDNUM.to_s
+                              :id                    => idnum.to_s
                           }
                       }
                   }
@@ -43,17 +44,17 @@ module Rapleaf
           expect_request(savon_client,
                          authentication_header,
                          equals_matcher(:lead_key => {
-                             :key_value => IDNUM,
+                             :key_value => idnum,
                              :key_type  => LeadKeyType::IDNUM
                          }),
                          'ns1:paramsGetLead',
                          response_hash)
-          expected_lead_record = LeadRecord.new(EMAIL, IDNUM)
+          expected_lead_record = LeadRecord.new(email, idnum)
           expected_lead_record.set_attribute('name1', 'val1')
           expected_lead_record.set_attribute('name2', 'val2')
           expected_lead_record.set_attribute('name3', 'val3')
           expected_lead_record.set_attribute('name4', 'val4')
-          client.get_lead_by_idnum(IDNUM).should == expected_lead_record
+          client.get_lead_by_idnum(idnum).should == expected_lead_record
         end
 
         it "should have the correct body format on get_lead_by_email" do
@@ -66,7 +67,7 @@ module Rapleaf
                       :count            => 1,
                       :lead_record_list => {
                           :lead_record => {
-                              :email                 => EMAIL,
+                              :email                 => email,
                               :lead_attribute_list   => {
                                   :attribute => [
                                       {:attr_name => 'name1', :attr_type => 'string', :attr_value => 'val1'},
@@ -77,7 +78,7 @@ module Rapleaf
                               },
                               :foreign_sys_type      => nil,
                               :foreign_sys_person_id => nil,
-                              :id                    => IDNUM.to_s
+                              :id                    => idnum.to_s
                           }
                       }
                   }
@@ -86,16 +87,16 @@ module Rapleaf
           expect_request(savon_client,
                          authentication_header,
                          equals_matcher({:lead_key => {
-                             :key_value => EMAIL,
+                             :key_value => email,
                              :key_type  => LeadKeyType::EMAIL}}),
                          'ns1:paramsGetLead',
                          response_hash)
-          expected_lead_record = LeadRecord.new(EMAIL, IDNUM)
+          expected_lead_record = LeadRecord.new(email, idnum)
           expected_lead_record.set_attribute('name1', 'val1')
           expected_lead_record.set_attribute('name2', 'val2')
           expected_lead_record.set_attribute('name3', 'val3')
           expected_lead_record.set_attribute('name4', 'val4')
-          client.get_lead_by_email(EMAIL).should == expected_lead_record
+          client.get_lead_by_email(email).should == expected_lead_record
         end
 
         it "should have the correct body format on sync_lead_record" do
@@ -105,14 +106,14 @@ module Rapleaf
           response_hash         = {
               :success_sync_lead => {
                   :result => {
-                      :lead_id     => IDNUM,
+                      :lead_id     => idnum,
                       :sync_status => {
                           :error   => nil,
                           :status  => 'UPDATED',
-                          :lead_id => IDNUM
+                          :lead_id => idnum
                       },
                       :lead_record => {
-                          :email                 => EMAIL,
+                          :email                 => email,
                           :lead_attribute_list   => {
                               :attribute => [
                                   {:attr_name => 'name1', :attr_type => 'string', :attr_value => 'val1'},
@@ -123,7 +124,7 @@ module Rapleaf
                           },
                           :foreign_sys_type      => nil,
                           :foreign_sys_person_id => nil,
-                          :id                    => IDNUM.to_s
+                          :id                    => idnum.to_s
                       }
                   }
               }
@@ -133,9 +134,9 @@ module Rapleaf
                          (Proc.new do |actual|
                              retval = true
                              retval = false unless actual[:return_lead]
-                             retval = false unless actual[:lead_record][:email].equal?(EMAIL)
+                             retval = false unless actual[:lead_record][:email].equal?(email)
                              retval = false unless actual[:lead_record][:lead_attribute_list][:attribute].size == 5
-                             retval = false unless actual[:lead_record][:lead_attribute_list][:attribute].include?({:attr_value => EMAIL, :attr_name => "Email", :attr_type => "string"})
+                             retval = false unless actual[:lead_record][:lead_attribute_list][:attribute].include?({:attr_value => email, :attr_name => "Email", :attr_type => "string"})
                              retval = false unless actual[:lead_record][:lead_attribute_list][:attribute].include?({:attr_value => "val1", :attr_name => "name1", :attr_type => "string"})
                              retval = false unless actual[:lead_record][:lead_attribute_list][:attribute].include?({:attr_value => "val2", :attr_name => "name2", :attr_type => "string"})
                              retval = false unless actual[:lead_record][:lead_attribute_list][:attribute].include?({:attr_value => "val3", :attr_name => "name3", :attr_type => "string"})
@@ -144,7 +145,7 @@ module Rapleaf
                          end),
                          'ns1:paramsSyncLead',
                          response_hash)
-          lead_record = LeadRecord.new(EMAIL, IDNUM)
+          lead_record = LeadRecord.new(email, idnum)
           lead_record.set_attribute('name1', 'val1')
           lead_record.set_attribute('name2', 'val2')
           lead_record.set_attribute('name3', 'val3')
@@ -160,14 +161,14 @@ module Rapleaf
           response_hash         = {
               :success_sync_lead => {
                   :result => {
-                      :lead_id     => IDNUM,
+                      :lead_id     => idnum,
                       :sync_status => {
                           :error   => nil,
                           :status  => 'UPDATED',
-                          :lead_id => IDNUM
+                          :lead_id => idnum
                       },
                       :lead_record => {
-                          :email                 => EMAIL,
+                          :email                 => email,
                           :lead_attribute_list   => {
                               :attribute => [
                                   {:attr_name => 'name1', :attr_type => 'string', :attr_value => 'val1'},
@@ -178,7 +179,7 @@ module Rapleaf
                           },
                           :foreign_sys_type      => nil,
                           :foreign_sys_person_id => nil,
-                          :id                    => IDNUM.to_s
+                          :id                    => idnum.to_s
                       }
                   }
               }
@@ -199,31 +200,31 @@ module Rapleaf
                            }
                            actual.should == expected
                            actual_attribute_list.should =~ [
-                               {:attr_value => FIRST,
+                               {:attr_value => first,
                                 :attr_name  => "FirstName",
                                 :attr_type  => "string"},
-                               {:attr_value => LAST,
+                               {:attr_value => last,
                                 :attr_name  => "LastName",
                                 :attr_type  => "string"},
-                               {:attr_value => EMAIL,
+                               {:attr_value => email,
                                 :attr_name  =>"Email",
                                 :attr_type  => "string"},
-                               {:attr_value => COMPANY,
+                               {:attr_value => company,
                                 :attr_name  => "Company",
                                 :attr_type  => "string"},
-                               {:attr_value => MOBILE,
+                               {:attr_value => mobile,
                                 :attr_name  => "MobilePhone",
                                 :attr_type  => "string"}
                            ]
                          },
                          'ns1:paramsSyncLead',
                          response_hash)
-          expected_lead_record = LeadRecord.new(EMAIL, IDNUM)
+          expected_lead_record = LeadRecord.new(email, idnum)
           expected_lead_record.set_attribute('name1', 'val1')
           expected_lead_record.set_attribute('name2', 'val2')
           expected_lead_record.set_attribute('name3', 'val3')
           expected_lead_record.set_attribute('name4', 'val4')
-          client.sync_lead(EMAIL, FIRST, LAST, COMPANY, MOBILE).should == expected_lead_record
+          client.sync_lead(email, first, last, company, mobile).should == expected_lead_record
         end
 
         context "list operations" do
@@ -247,7 +248,7 @@ module Rapleaf
                                                   :lead_key => [
                                                       {
                                                           :key_type  => 'EMAIL',
-                                                          :key_value => EMAIL
+                                                          :key_value => email
                                                       }
                                                   ]
                                               }
@@ -255,7 +256,7 @@ module Rapleaf
                            'ns1:paramsListOperation',
                            response_hash)
 
-            @client.add_to_list(LIST_KEY, EMAIL).should == response_hash
+            @client.add_to_list(LIST_KEY, email).should == response_hash
           end
 
           it "should have the correct body format on remove_from_list" do
@@ -270,7 +271,7 @@ module Rapleaf
                                                   :lead_key => [
                                                       {
                                                           :key_type  => 'EMAIL',
-                                                          :key_value => EMAIL
+                                                          :key_value => email
                                                       }
                                                   ]
                                               }
@@ -278,7 +279,7 @@ module Rapleaf
                            'ns1:paramsListOperation',
                            response_hash)
 
-            @client.remove_from_list(LIST_KEY, EMAIL).should == response_hash
+            @client.remove_from_list(LIST_KEY, email).should == response_hash
           end
 
           it "should have the correct body format on is_member_of_list?" do
@@ -293,7 +294,7 @@ module Rapleaf
                                                   :lead_key => [
                                                       {
                                                           :key_type  => 'EMAIL',
-                                                          :key_value => EMAIL
+                                                          :key_value => email
                                                       }
                                                   ]
                                               }
@@ -301,7 +302,7 @@ module Rapleaf
                            'ns1:paramsListOperation',
                            response_hash)
 
-            @client.is_member_of_list?(LIST_KEY, EMAIL).should == response_hash
+            @client.is_member_of_list?(LIST_KEY, email).should == response_hash
           end
         end
       end
