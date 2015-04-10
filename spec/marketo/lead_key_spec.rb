@@ -18,21 +18,21 @@ module Rapleaf
 
     describe LeadKey do
       it "should store type and value on construction" do
-        KEY_VALUE = 'a value'
-        KEY_TYPE = LeadKeyType::IDNUM
-        lead_key = LeadKey.new(KEY_TYPE, KEY_VALUE)
-        lead_key.key_type.should == KEY_TYPE
-        lead_key.key_value.should == KEY_VALUE
+        key_value = 'a value'
+        key_type = LeadKeyType::IDNUM
+        lead_key = LeadKey.new(key_type, key_value)
+        lead_key.key_type.should == key_type
+        lead_key.key_value.should == key_value
       end
 
       it "should to_hash correctly" do
-        KEY_VALUE = 'a value'
-        KEY_TYPE = LeadKeyType::IDNUM
-        lead_key = LeadKey.new(KEY_TYPE, KEY_VALUE)
+        key_value = 'a value'
+        key_type = LeadKeyType::IDNUM
+        lead_key = LeadKey.new(key_type, key_value)
 
         lead_key.to_hash.should == {
-            :key_type => KEY_TYPE,
-            :key_value => KEY_VALUE
+            :key_type => key_type,
+            :key_value => key_value
         }
       end
     end
