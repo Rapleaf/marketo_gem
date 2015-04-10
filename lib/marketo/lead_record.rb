@@ -50,8 +50,8 @@ module Rapleaf
       end
 
       def ==(other)
-        @attributes == other.attributes &&
-        @idnum == other.idnum
+        return false unless other.respond_to?(:attributes) && other.respond_to?(:idnum)
+        @attributes == other.attributes && @idnum == other.idnum
       end
     end
   end
