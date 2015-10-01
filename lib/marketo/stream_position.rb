@@ -17,10 +17,10 @@ module Marketo
 
     # create a hash from this instance, for sending this object to marketo using savon
     def to_hash
-      {
-          :oldestCreatedAt => @oldestCreatedAt.to_s,
-          :latestCreatedAt => @latestCreatedAt.to_s
-      }
+      {}.tap do |hash|
+        hash[:oldestCreatedAt] = @oldestCreatedAt.to_s,
+        hash[:latestCreatedAt] = @latestCreatedAt.to_s if @latestCreatedAt
+      end
     end
   end
 end
