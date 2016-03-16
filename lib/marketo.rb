@@ -1,9 +1,7 @@
 require 'rubygems'
 require 'savon'
 
-Savon.configure do |config|
-  config.log = false # disable logging
-end
+HTTPI.log = false
 
 require File.expand_path('marketo/client', File.dirname(__FILE__))
 require File.expand_path('marketo/authentication_header', File.dirname(__FILE__))
